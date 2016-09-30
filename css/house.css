@@ -1,0 +1,114 @@
+html, body, #mapDiv {
+    padding:0;
+    margin:0;
+    height:100%;
+    font-family: arial;
+}
+button {
+    display: inline-block;
+}
+
+#infoHome {    
+    position: relative;
+    /*top: 20px;
+    color: #444;
+    height: auto;
+    font-family: arial;
+    right: 20px;
+    margin: 5px;
+    padding: 10px;
+    position: absolute;
+    width: 115px;
+    z-index: 40;
+    border: solid 2px #666;
+    border-radius: 4px;
+    background-color: #fff;*/
+}
+
+.multiHouseHigh {
+	width: 20%;
+	height: 70px;
+	padding-bottom: 30%;
+    border-radius: 50%;
+	border:2px solid #000;
+    overflow:hidden;		    
+    background-image: url("images/high.jpg"); 
+    margin-bottom: 1em;    
+}
+
+.multiHouseMid {
+	width: 20%;
+	height: 70px;
+	padding-bottom: 20%;
+    border-radius: 50%;
+	border:2px solid #000;
+    overflow:hidden;	    
+    background-image: url("images/mid.jpg"); 		    
+    margin-bottom: 1em;    
+}
+.multiHouseLow {
+	width: 20%;
+	height: 70px;
+	padding-bottom: 20%;
+    border-radius: 50%;
+	border:2px solid #000;
+    overflow:hidden;		    
+    background-image: url("images/c.jpg"); 
+    margin-bottom: 1em;    
+}
+
+#unitsubmit{
+    padding: 2px 4px;
+}
+
+.countunit{
+	font-weight: bold;   
+}
+.round-button-circle:hover {
+	border:1px solid #000;  
+}
+
+#alert_placeholder{
+    position: fixed;
+    font-size: medium; 
+    top: 80px;
+    left: 62px;
+    width: 200px; 
+    z-index:50; 
+    background-color: #f00;
+    color:#fff;   
+}
+
+.calcite-maps .panel-body button {
+    padding: 5px 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.calcite-maps .panel-body input, .calcite-maps .panel-body select, .calcite-maps .panel-body textarea {
+    padding: 7px 28px;
+    font-size: 15px;      
+}
+
+.btn-default :active, .btn-default:hover {
+    background-color: #929191!important;
+    color: #fff!important;
+}
+
+.btn-default {
+    color: #323232;
+    background-color: #fff;
+    border-color: #a9a9a9;
+}
+
+.btn-default.disabled, .btn-default.disabled.active, .btn-default.disabled.focus, .btn-default.disabled:active, .btn-default.disabled:focus, .btn-default.disabled:hover, .btn-default[disabled], .btn-default[disabled].active, .btn-default[disabled].focus, .btn-default[disabled]:active, .btn-default[disabled]:focus, .btn-default[disabled]:hover, fieldset[disabled] .btn-default, fieldset[disabled] .btn-default.active, fieldset[disabled] .btn-default.focus, fieldset[disabled] .btn-default:active, fieldset[disabled] .btn-default:focus, fieldset[disabled] .btn-default:hover {
+    background-color: #fff;
+    border-color: #a9a9a9;
+}
+
+.loc{
+     display: block;
+
+     margin-left: 10px;
+}
+

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="description" content="Boston Place Unit Map">
+  <meta name="author" content="Giovanni Zambotti">
+  
+  <title>Boston Units Maps</title>
+
+  <!-- Calcite Maps -->
+  <link rel="stylesheet" href="css/calcite-maps-arcgis-3.x.min.css">  
+  <!-- ArcGIS JS 3.x -->
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/themes/calcite/dijit/calcite.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/themes/calcite/esri/esri.css">
+
+  <link rel="stylesheet" href="css/house.css">
+          
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }   
+
+  </style>
+</head>
+<!--
+<body class="calcite-maps nav-position-top nav-space-all panel-right zoom-top-left calcite-theme-dark calcite-widgets-light">
+-->
+<body class="calcite calcite-maps nav-position-top nav-space-all zoom-top-left layout-inline-left calcite-theme-grey">
+
+
+  <!-- Navbar -->
+
+  <nav class="navbar calcite-lighter-grey calcite-text-dark navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNav" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand">
+          <span class="esri-icon esri-icon-map-pin"></span>
+        </a>
+        <div class="navbar-title">
+          <div class="navbar-main-title text-overflow">Boston Units Map</div>
+          <div class="navbar-sub-title text-overflow">More info about this projetc...</div> 
+        </div>
+      </div>
+      <!-- Navbar collapse -->
+      <div id="mainNav" class="collapse navbar-collapse" aria-expanded="false">
+        <ul class="nav navbar-nav navbar-right">                    
+          <!-- Map and Scene -->
+           <li><form id="searchNav" class="navbar-form navbar-search hidden-xs visible-sm visible-md visible-lg"><div id="searchNavDiv"></div></form></li>
+          <!-- Options dropdown menu -->
+          <li class="dropdown" role="presentation">
+            <a class="dropdown-toggle hidden-xs" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="esri-icon esri-icon-menu" aria-hidden="true"></span></a>
+            <ul class="dropdown-menu calcite-theme-light">
+              <li><a role="button" data-target="#panelInfo" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span> Info</a></li>
+              <li><a class="visible-xs" role="button" data-target="#panelSearch" aria-haspopup="true"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+              <!--<li><a role="button" data-target="#panelBasemaps" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Basemaps</a></li>-->
+              <li><a role="button" data-target="#panelHome" aria-haspopup="true"><span class="glyphicon glyphicon-home"></span> City Units</a></li>
+              <li><a role="button" data-target="#panelZipcode" aria-haspopup="true"><span class="glyphicon glyphicon-th"></span> Zipcode Units</a></li>
+            </ul>
+          </li>      
+        </ul><!--/.nav -->
+      </div><!--/.nav-collapse -->
+    </div><!--/.container-fluid -->
+  </nav><!--/.navbar -->
+
+  <!-- Map Container  -->
+
+  <div class="map-container">
+    <div id="mapViewDiv" class="map-position-absolute"><div id ="alert_placeholder"></div></div>
+
+  </div><!-- /.container -->
+
+  <!-- Panel -->
+
+  <div class="panel-container">
+    <div id="panelAccordion" class="panel-group"  role="tablist" aria-multiselectable="true">            
+      <!-- Info Panel -->    
+      <!--<div id="panelInfo" class="panel collapse">-->
+      <div id="panelInfo" class="panel collapse in">
+        <div id="headingInfo" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseInfo" data-parent="#panelAccordion" aria-expanded="true" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Info</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
+          <div class="panel-body">
+            <p>Please select your zipcode!</p>
+            
+            <!--<input id="zipcodetext">-->
+            <select id="zipcodetext">
+              <option value="02127">02127</option>
+              <option value="02132">02132</option>
+              <option value="02135">02135</option>
+              <option value="02108">02108</option>
+              <option value="02114">02114</option>
+              <option value="02115">02115</option>
+              <option value="02116">02116</option>
+              <option value="02118">02118</option>
+              <option value="02119">02119</option>
+              <option value="02120">02120</option>
+              <option value="02121">02121</option>
+              <option value="02124">02124</option>
+              <option value="02126">02126</option>
+              <option value="02130">02130</option>
+              <option value="02131">02131</option>
+              <option value="02134">02134</option>
+              <option value="02136">02136</option>
+              <option value="02199">02199</option>
+              <option value="02215">02215</option>
+              <option value="02129">02129</option>
+              <option value="02163">02163</option>
+              <option value="02109">02109</option>
+              <option value="02110">02110</option>
+              <option value="02111">02111</option>
+              <option value="02122">02122</option>
+              <option value="02125">02125</option>
+              <option value="02210">02210</option>
+              <option value="02113">02113</option>
+              <option value="02128">02128</option>
+            </select>
+            
+            <button id="zipcodeid" type="button" class="btn btn-default" data-toggle="collapse" data-target="#collapseHome" data-parent="#panelAccordion">Submit Zipcode</button>
+              
+          </div>
+        </div>
+      </div>    
+      <!-- Home Panel -->      
+      <div id="panelHome" class="panel collapse in"> 
+        <div id="headingHome" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseHome" aria-expanded="false" data-parent="#panelAccordion"  aria-controls="collapseHome"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> City Units</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelHome"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapseHome" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingHome">
+        <div class="panel-body">
+          <div id="infoCity">
+            <div>Add house units to the map by cliking to the colors bottom below and then to the map. Each house worth 200 units. Units to place 600. Units placed: <span id="countunit">0</span></div>
+            <div>
+              <!--             
+              <button class="round-button-circle multiHouseHigh" value="househigh"></button>
+              <button class="round-button-circle multiHouseMid" value="housemid"></button>
+              <button class="round-button-circle multiHouseLow" value="houselow"></button>
+              -->
+              <button type="button" class="btn btn-default round-button-circle" value="househigh">High</button>
+              <button type="button" class="btn btn-default round-button-circle" value="housemid">Mid</button>
+              <button type="button" class="btn btn-default round-button-circle" value="houselow">Low</button>
+              
+            </div>
+            <div>
+              <button id="unitsubmit" type="button" class="btn btn-default" data-toggle="collapse" data-target="#collapseZipcode" data-parent="#panelAccordion" disabled="true">Submit Units</button>
+            </div>
+          </div>          
+        </div>
+        </div>
+        
+      </div>
+      <!-- Home Zipcode -->
+      <div id="panelZipcode" class="panel collapse in"> 
+        <div id="headingZipcode" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseZipcode" aria-expanded="false" data-parent="#panelAccordion"  aria-controls="collapseZipcode"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Zipcode Units</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelZipcode"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapseZipcode" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingHome">
+        <div class="panel-body">
+          <div id="infoZip">            
+            <div>Click on the map to create a 1 miles buffer radius; and then placed the units within the buffer black zone. Units placed: <span id="countunitzip">0</span></div>
+            <div>
+              <button type="button" class="btn btn-default round-button-circle" value="househigh">High</button>
+              <button type="button" class="btn btn-default round-button-circle" value="housemid">Mid</button>
+              <button type="button" class="btn btn-default round-button-circle" value="houselow">Low</button>
+              <!--
+              <button class="round-button-circle multiHouseHigh" value="househigh"></button>
+              <button class="round-button-circle multiHouseMid" value="housemid"></button>
+              <button class="round-button-circle multiHouseLow" value="houselow"></button>
+              -->
+            </div>
+            <div>
+              <button id="zipunitsubmit" class="btn btn-outline-primary" disabled="disabled">Submit Zipcode Units</button>
+            </div>
+          </div>          
+        </div>
+        </div>
+        
+      </div>  
+      <!-- Search Panel -->
+
+      <div id="panelSearch" class="panel collapse hidden-sm hidden-md hidden-lg">
+        <div id="headingSearch" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseSearch" data-parent="#panelAccordion" aria-expanded="false" aria-controls="collapseSearch"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelSearch"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>        
+          </div>
+        </div>
+        <div id="collapseSearch" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSearch">
+          <div class="panel-body panel-overflow-visible"> 
+            <div id="searchPanelDiv"></div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Basemaps Panel -->
+      <!--
+      <div id="panelBasemaps" class="panel collapse"> 
+        <div id="headingBasemaps" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseBasemaps" aria-expanded="false" data-parent="#panelAccordion"  aria-controls="collapseBasemaps"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Basemaps</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelBasemaps"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapseBasemaps" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingBasemaps">
+          <div class="panel-body">
+            <select id="selectBasemapPanel" class="form-control">
+              <option value="streets" data-vector="vector-streets">Streets</option>
+              <option value="satellite" data-vector="satellite">Satellite</option>
+              <option value="hybrid" data-vector="hybrid">Hybrid</option>
+              <option value="national-geographic" data-vector="national-geographic">National Geographic</option>
+              <option value="topo" data-vector="vector-streets-relief">Topographic</option>
+              <option value="gray" data-vector="vector-canvas-light">Gray</option>
+              <option value="dark-gray" data-vector="vector-canvas-dark">Dark Gray</option>
+              <option value="osm" data-vector="osm">Open Street Map</option>
+              <option value="dark-gray" data-vector="vector-streets-night">Streets Night</option>
+              <option value="streets" data-vector="vector-streets-mobile">Streets Mobile</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      -->
+      
+    </div> <!-- /.panel-group -->
+
+  </div> <!-- /.panel-container -->
+
+    <script type="text/javascript">
+      var dojoConfig = {
+        packages: [{
+          name: "bootstrap",
+          //location: "https://esri.github.io/calcite-maps/dist/js/dojo-bootstrap"
+          location: location.pathname.replace(/\/[^/]+$/, "") + "vendor/dojo-bootstrap"
+        },
+        {
+          name: "calcite-maps",
+          //location: "https://esri.github.io/calcite-maps/dist/js/dojo"
+          location: location.pathname.replace(/\/[^/]+$/, "") + "js/dojo"
+        }]
+      };
+    </script>
+
+    <!-- ArcGIS JS 3.x -->
+    <script src="https://js.arcgis.com/3.16/"></script>
+    <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+    
+    <script src="js/city.js"></script>
+ 
+</body>
+</html>
+
