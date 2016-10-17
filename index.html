@@ -7,7 +7,7 @@
   <meta name="description" content="Boston Place Unit Map">
   <meta name="author" content="Giovanni Zambotti">
   
-  <title>Boston Units Maps</title>
+  <title>Building Boston</title>
 
   <!-- Calcite Maps -->
   <link rel="stylesheet" href="css/calcite-maps-arcgis-3.x.min.css">  
@@ -30,8 +30,7 @@
 <body class="calcite-maps nav-position-top nav-space-all panel-right zoom-top-left calcite-theme-dark calcite-widgets-light">
 -->
 <body class="calcite calcite-maps nav-position-top nav-space-all zoom-top-left layout-inline-left calcite-theme-grey">
-
-
+               
   <!-- Navbar -->
 
   <nav class="navbar calcite-lighter-grey calcite-text-dark navbar-fixed-top">
@@ -47,8 +46,8 @@
           <span class="esri-icon esri-icon-map-pin"></span>
         </a>
         <div class="navbar-title">
-          <div class="navbar-main-title text-overflow">Boston Units Map</div>
-          <div class="navbar-sub-title text-overflow">More info about this projetc...</div> 
+          <div class="navbar-main-title text-overflow">Building Boston</div>
+          <div class="navbar-sub-title text-overflow">More info about this projetc...</div>
         </div>
       </div>
       <!-- Navbar collapse -->
@@ -59,12 +58,14 @@
           <!-- Options dropdown menu -->
           <li class="dropdown" role="presentation">
             <a class="dropdown-toggle hidden-xs" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span class="esri-icon esri-icon-menu" aria-hidden="true"></span></a>
-            <ul class="dropdown-menu calcite-theme-light">
-              <li><a role="button" data-target="#panelInfo" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span> Info</a></li>
+            <ul class="dropdown-menu calcite-theme-light">              
+              <li><a role="button" data-target="#panelInfo" aria-haspopup="true"><span class="glyphicon glyphicon-info-sign"></span> Info</a></li>              
+              <li><a role="button" data-target="#panelZipcode" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Zipcode Info</a></li>
               <li><a class="visible-xs" role="button" data-target="#panelSearch" aria-haspopup="true"><span class="glyphicon glyphicon-search"></span> Search</a></li>
               <!--<li><a role="button" data-target="#panelBasemaps" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Basemaps</a></li>-->
               <li><a role="button" data-target="#panelHome" aria-haspopup="true"><span class="glyphicon glyphicon-home"></span> City Units</a></li>
-              <li><a role="button" data-target="#panelZipcode" aria-haspopup="true"><span class="glyphicon glyphicon-th"></span> Zipcode Units</a></li>
+              <li><a role="button" data-target="#panelNeighborhood" aria-haspopup="true"><span class="glyphicon glyphicon-th"></span> Neighborhood Units</a></li>
+              <li><a role="button" data-target="#panelSurvey" aria-haspopup="true"><span class="glyphicon glyphicon-th-list"></span> Survey</a></li>
             </ul>
           </li>      
         </ul><!--/.nav -->
@@ -79,12 +80,11 @@
 
   </div><!-- /.container -->
 
-  <!-- Panel -->
-
+  <!-- All Panels -->
   <div class="panel-container">
     <div id="panelAccordion" class="panel-group"  role="tablist" aria-multiselectable="true">            
-      <!-- Info Panel -->    
-      <!--<div id="panelInfo" class="panel collapse">-->
+      
+      <!-- Info Panel -->      
       <div id="panelInfo" class="panel collapse in">
         <div id="headingInfo" class="panel-heading" role="tab">
           <div class="panel-title">
@@ -93,9 +93,31 @@
           </div>
         </div>
         <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
+        <div class="panel-body">
+        As more people move to Boston, the City needs to decide where new homes and apartments
+        should be built. In this activity, you will decide where 600 units of market rate housing should be
+        built in Boston.
+        You will be given 5 buildings, each containing 120 units of housing, to place within Boston. To
+        place a building, click on the building’s button, then clicking on the location where you would like  
+        that building to go. To start click the "x" button on the top right.
+        <!--<img src="css/images/house.gif" alt="house" height="200" width="300">        -->
+        <video width="300" height="240" controls>
+          <source src="http://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">        
+        </video>
+        </div>
+      </div>  
+      </div>
+      <!-- Zipcode Panel -->          
+      <div id="panelZipcode" class="panel collapse">
+        <div id="headingZipcode" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseZipcode" data-parent="#panelAccordion" aria-expanded="true" aria-controls="collapseZipcode"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Zipcode Info</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelZipcode"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapseZipcode" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingZipcode">
           <div class="panel-body">
-            <p>Please select your zipcode!</p>
-            
+            <p>Please select your zipcode. If your zipcode is not listed, then you are not eligible for this study.</p>            
             <!--<input id="zipcodetext">-->
             <select id="zipcodetext">
               <option value="02127">02127</option>
@@ -126,75 +148,164 @@
               <option value="02125">02125</option>
               <option value="02210">02210</option>
               <option value="02113">02113</option>
-              <option value="02128">02128</option>
-            </select>
-            
-            <button id="zipcodeid" type="button" class="btn btn-default" data-toggle="collapse" data-target="#collapseHome" data-parent="#panelAccordion">Submit Zipcode</button>
-              
+              <option value="02128">02128</option>              
+            </select>            
+            <button id="zipcodeid" type="button" class="btn btn-default" data-toggle="collapse" data-target="#collapseCity" data-parent="#panelAccordion">Submit Zipcode</button>             
           </div>
         </div>
       </div>    
-      <!-- Home Panel -->      
-      <div id="panelHome" class="panel collapse in"> 
-        <div id="headingHome" class="panel-heading" role="tab">
+      <!-- City Units Panel -->      
+      <div id="panelCity" class="panel collapse"> 
+        <div id="headingCity" class="panel-heading" role="tab">
           <div class="panel-title">
-            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseHome" aria-expanded="false" data-parent="#panelAccordion"  aria-controls="collapseHome"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> City Units</a>
-            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelHome"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseCity" aria-expanded="false" data-parent="#panelAccordion"  aria-controls="collapseCity"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> City Units</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelCity"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
           </div>
         </div>
-        <div id="collapseHome" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingHome">
+        <div id="collapseCity" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCity">
         <div class="panel-body">
           <div id="infoCity">
-            <div>Add house units to the map by cliking to the bottons below and then to the map. You can choose high, mid or low rise. Each house units worth 200 units. Units to place 600. Units placed: <span id="countunit">0</span></div>
+            <div>Place each building on the map by clicking the type of building you want, then clicking the
+desired location on the map. Each building contains 120 units. Units to place 600, Units placed: <span id="countunit">0</span></div>
             <div>
-              <!--             
-              <button class="round-button-circle multiHouseHigh" value="househigh"></button>
-              <button class="round-button-circle multiHouseMid" value="housemid"></button>
-              <button class="round-button-circle multiHouseLow" value="houselow"></button>
-              -->
-              <button type="button" class="btn btn-default round-button-circle" value="househigh">High</button>
-              <button type="button" class="btn btn-default round-button-circle" value="housemid">Mid</button>
-              <button type="button" class="btn btn-default round-button-circle" value="houselow">Low</button>
-              
+              <button type="button" class="btn btn-default round-button-circle" value="househigh" data-toggle="tooltip" title="12 stories">High</button>
+              <button type="button" class="btn btn-default round-button-circle" value="housemid" data-toggle="tooltip" title="6 stories">Mid</button>
+              <button type="button" class="btn btn-default round-button-circle" value="houselow" data-toggle="tooltip" title="3 stories">Low</button>              
             </div>
             <div>
-              <button id="unitsubmit" type="button" class="btn btn-default" data-toggle="collapse" data-target="#collapseZipcode" data-parent="#panelAccordion" disabled="true">Submit Units</button>
+              <button id="unitsubmit" type="button" class="btn btn-default" data-toggle="collapse" data-target="#collapseNeighborhood" data-parent="#panelAccordion" disabled="true">Submit City Units</button>
+            </div>
+          </div>          
+        </div>
+        </div>        
+      </div>
+      <!-- Neighborhood Units Panel-->
+      <div id="panelNeighborhood" class="panel collapse"> 
+        <div id="headingNeighborhood" class="panel-heading" role="tab">
+          <div class="panel-title">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseNeighborhood" aria-expanded="false" data-parent="#panelAccordion"  aria-controls="collapseNeighborhood"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Neighborhood Units</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelNeighborhood"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapseNeighborhood" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNeighborhood">
+        <div class="panel-body">
+          <div id="infoNeighborhood">            
+            <div>This is your zipcode. Please click within your zip code to indicate approximately where you
+live. Please complete the same task of placing 600 units, but now within your neighborhood. Units placed: <span id="countunitzip">0</span></div>
+            <div>
+              <button type="button" class="btn btn-default round-button-circle" value="househigh" data-toggle="tooltip" title="12 stories">High</button>
+              <button type="button" class="btn btn-default round-button-circle" value="housemid" data-toggle="tooltip" title="6 stories">Mid</button>
+              <button type="button" class="btn btn-default round-button-circle" value="houselow" data-toggle="tooltip" title="3 stories">Low</button>
+            </div>
+            <div>
+              <button id="nbhunitsubmit" class="btn btn-outline-primary" disabled="disabled">Submit Neighborhood Units</button>
             </div>
           </div>          
         </div>
         </div>
         
       </div>
-      <!-- Home Zipcode -->
-      <div id="panelZipcode" class="panel collapse in"> 
-        <div id="headingZipcode" class="panel-heading" role="tab">
+      <!-- Survey -->
+      <div id="panelSurvey" class="panel collapse">
+        <div id="headingSurvey" class="panel-heading" role="tab">
           <div class="panel-title">
-            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseZipcode" aria-expanded="false" data-parent="#panelAccordion"  aria-controls="collapseZipcode"><span class="glyphicon glyphicon-th" aria-hidden="true"></span> Zipcode Units</a>
-            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelZipcode"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseSurvey" aria-expanded="false" data-parent="#panelAccordion"  aria-controls="collapseSurvey"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Survey</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelSurvey"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
           </div>
         </div>
-        <div id="collapseZipcode" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingHome">
+        <div id="collapseSurvey" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingHome"></div>
         <div class="panel-body">
-          <div id="infoZip">            
-            <div>Click on the map to create a 1 miles buffer radius; and then placed the units within the buffer black zone. Units placed: <span id="countunitzip">0</span></div>
-            <div>
-              <button type="button" class="btn btn-default round-button-circle" value="househigh">High</button>
-              <button type="button" class="btn btn-default round-button-circle" value="housemid">Mid</button>
-              <button type="button" class="btn btn-default round-button-circle" value="houselow">Low</button>
-              <!--
-              <button class="round-button-circle multiHouseHigh" value="househigh"></button>
-              <button class="round-button-circle multiHouseMid" value="housemid"></button>
-              <button class="round-button-circle multiHouseLow" value="houselow"></button>
-              -->
-            </div>
-            <div>
-              <button id="zipunitsubmit" class="btn btn-outline-primary" disabled="disabled">Submit Zipcode Units</button>
-            </div>
-          </div>          
+          <div id="infoSurvey">           
+                
+          Thank you for completing the exercise. We would now like to ask you a few questions about
+          your participation in various groups.
+          <ol>
+            <li>Over the past 12 months, Boston has built 5,000 units of housing. Looking at the next 12
+            months, should Boston build...?
+              <select id="q1">
+                <option value="q1a">More than 5,000 units.</option>
+                <option value="q1b">Around 5,000 units.</option>
+                <option value="q1c">Fewer than 5,000 units.</option>
+                <option value="q1d">No units, 0 units.</option>              
+              </select>
+            </li>  
+            <li>In the past 12 months, have you attended a Boston public meeting or community forum?
+              <select id="q2">
+                <option value="q2a">Yes</option>
+                <option value="q2b">No</option>                
+              </select>              
+            </li>
+            <li>How long have you lived in Boston, in years?
+              <input id="q3" type="number" min="1" max="100" pattern="\d+">  
+            </li>
+            <li>How long have you lived at your current address, in years?
+              <input id="q4" type="number" min="1" max="100" pattern="\d+">  
+            </li>
+            <li>Do you or your family own the place in Boston where you are living now, or do you rent?
+              <select id="q5">
+                <option value="q5a">Own</option>
+                <option value="q5b">Rent</option>
+                <option value="q5c">Other</option>                                
+              </select>              
+            </li>
+            <li>Thinking back over the last year, what was your household’s annual income?
+              <select id="q6">
+                <option value="q6a">Under $20,000</option>
+                <option value="q6b">$20,001 to $50,000</option>
+                <option value="q6c">$50,001 to $80,000</option>
+                <option value="q6d">$80,001 to $120,000</option>
+                <option value="q6e">$120,001 to $250,000</option>
+                <option value="q6f">Over 250,000</option>                                
+              </select>              
+            </li>
+            <li>Which of the following best describes your marital status?
+              <select id="q7">
+                <option value="q7a">Single, never married</option>
+                <option value="q7b">Married, living with spouse</option>
+                <option value="q7c">Divorced</option>
+                <option value="q7d">Separated</option>
+                <option value="q7e">Widowed</option>
+                <option value="q7f">Living with partner</option>                                
+              </select>              
+            </li>
+            <li>What is your gender?
+              <select id="q8">
+                <option value="q8a">Male</option>
+                <option value="q8b">Female</option>
+                <option value="q8c">Other</option>                                
+              </select>              
+            </li>
+            <li>What year were you born?
+              <input id="q9" type="number" min="1900" max="2016" pattern="\d+">  
+            </li>
+            <li>What racial or ethnic group(s) best describe you? Select all that apply
+              <select id="q10">
+                <option value="q10a">White</option>
+                <option value="q10b">Black or African-American</option>
+                <option value="q10c">Hispanic or Latino</option>
+                <option value="q10d">Asian or Asian-American</option>
+                <option value="q10e">Native American</option>
+                <option value="q10f">Middle Eastern</option>
+                <option value="q10g">Other</option>                                
+              </select>              
+            </li>
+            <li>In general, do you think of yourself as...
+              <select id="q11">
+                <option value="q11a">Extremely liberal</option>
+                <option value="q11b">Liberal</option>
+                <option value="q11c">Slightly liberal</option>
+                <option value="q11d">Moderate, middle of the road</option>
+                <option value="q11e">Slightly conservative</option>
+                <option value="q11f">Conservative</option>
+                <option value="q11g">Extremely conservative</option>                                
+              </select>              
+            </li>
+          </ol>
+          <button id="survysubmit" class="btn btn-outline-primary">Submit Survey</button>      
+          </div>
+          </div>        
         </div>
-        </div>
-        
-      </div>  
+      </div>    
       <!-- Search Panel -->
 
       <div id="panelSearch" class="panel collapse hidden-sm hidden-md hidden-lg">
@@ -210,8 +321,6 @@
           </div>
         </div>
       </div>
-
-
       <!-- Basemaps Panel -->
       <!--
       <div id="panelBasemaps" class="panel collapse"> 
@@ -243,7 +352,7 @@
     </div> <!-- /.panel-group -->
 
   </div> <!-- /.panel-container -->
-
+    <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
     <script type="text/javascript">
       var dojoConfig = {
         packages: [{
@@ -260,9 +369,7 @@
     </script>
 
     <!-- ArcGIS JS 3.x -->
-    <script src="https://js.arcgis.com/3.16/"></script>
-    <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
-    
+    <script src="https://js.arcgis.com/3.16/"></script>    
     <script src="js/city.js"></script>
  
 </body>

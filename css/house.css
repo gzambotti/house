@@ -73,7 +73,7 @@ button {
     font-size: medium; 
     top: 80px;
     left: 62px;
-    width: 200px; 
+    width: 300px; 
     z-index:50; 
     background-color: #f00;
     color:#fff;   
@@ -108,7 +108,19 @@ button {
 
 .loc{
      display: block;
-
      margin-left: 10px;
 }
+.calcite-maps .panel-body {
+    padding: 15px;
+    min-height: 50px;
+    max-height: 500px;
+    font-size: 14px;
+    overflow: auto;
+    border-top: none;
+}
+
+.round-button-circle{
+    font-size: 15px;    
+}
+
 

@@ -3,6 +3,7 @@ var map, searchWidgetNav, searchWidgetPanel, activeView, tbHighCity, tbMidCity, 
 var tbHighZip, tbMidZip, tbLowZip;
 var sessionCity = {};
 var sessionZip = {};
+var sessionSurvey = {};
 
 Date.prototype.IsoNum = function (n) {
     var tzoffset = this.getTimezoneOffset() * 60000; //offset in milliseconds
@@ -25,7 +26,6 @@ var hash = function(s){
 };
 var require;
 var userhash = hash(10);
-
 require([
   // ArcGIS
   "esri/map",  
@@ -68,7 +68,7 @@ require([
   });
     
   var symbolBostonBoundary = new SimpleFillSymbol(SimpleFillSymbol.STYLE_NULL,new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([5,5, 5]),2));
-  var jsonBostonBoundary = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonboundary/FeatureServer/0/query?where=1+%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=&units=esriSRUnit_Meter&outFields=&returnGeometry=true&returnCentroid=false&multipatchOption=&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pjson";
+  var jsonBostonBoundary = "http://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonboundaryzip/FeatureServer/0/query?where=1+%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=&units=esriSRUnit_Meter&outFields=&returnGeometry=true&returnCentroid=false&multipatchOption=&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pjson";
   
   $.ajax({      
     type: "GET",
@@ -100,9 +100,26 @@ require([
   }
 
   map.on("load", initToolbarCity);
+
+  $('#panelInfo').on('click', function (e) {
+    //console.log('Event fired on #' + e.currentTarget.id);
+    $("#panelZipcode").attr('class', 'panel collapse in');
+  })
+
   
-  document.getElementById("unitsubmit").addEventListener("click", getCityUnitsData);
-  document.getElementById("zipunitsubmit").addEventListener("click", getZipUnitsData);
+
+  // close the info panel
+  $('#zipcodeid').on('click', function () {
+    $("#panelZipcode").attr('class', 'panel collapse');
+    //$("#panelSurvey").attr('class', 'panel collapse in');
+    $("#panelCity").attr('class', 'panel collapse in');
+  });
+  // run the getCityUnitsData function
+  $('#unitsubmit').on('click', getCityUnitsData);
+  // run the getZipUnitsData function
+  $('#nbhunitsubmit').on('click', getZipUnitsData);
+  // run the getSurveryData function
+  $('#survysubmit').on('click', getSurveyData);
   
   var svgHigh = "M0,1108h256V0H0V1108z  M160,64h64v64h-64V64z M160,192h64v64h-64V192z M160,320h64v64h-64V320z M160,448h64v64h-64V448z M160,576h64v64h-64V576z M160,704h64v64h-64V704z M160,832h64v64h-64V832z M160,960h64v64h-64V960z M32,64h64v64H32V64z M32,192 h64v64H32V192z M32,320h64v64H32V320z M32,448h64v64h-64V448z M32,576h64v64h-64V576z M32,704h64v64h-64V704z M32,832h64v64h-64V832z M32,960h64v64h-64V960z";
   var svgMid = "M0,262h160V0H0V262z M108,44h32v32h-32V64z M108,114h32v32h-32V64z M108,184h32v32h-32V64z M60,44h32v32h-32V64z M60,114h32v32h-32V64z M60,184h32v32h-32V64z  M12,44h32v32H12V44z M12,114h32v32H12V44z M12,184h32v32H12V44z";
@@ -176,8 +193,8 @@ require([
       var node = e.graphic.getDojoShape().getNode();
       map.graphics.remove(selected);
       var units = Number(document.getElementById("countunit").innerText);
-      if(units > 0 && units < 800){
-        document.getElementById("countunit").innerText = Number(document.getElementById("countunit").innerText) - 200;
+      if(units > 0 && units < 720){
+        document.getElementById("countunit").innerText = Number(document.getElementById("countunit").innerText) - 120;
       }
       else{
         return;
@@ -186,7 +203,7 @@ require([
   }
 
   // function that alert if the unit locetion is out of the boundary
-  function executeAlert(newmessage) {
+  function executeAlert(newmessage, time) {
     if($(".alert").length > 0){
       for (var i = $(".alert").length - 1; i >= 0; i--) {
         $(".alert")[i].remove();
@@ -196,7 +213,7 @@ require([
     bootstrap_alert.info = function(message) {
           $('#alert_placeholder').append('<div class="alert alert-info alert-dismissable"><span class="loc">'+message+'</span></div>')
 
-          $(".alert-dismissable").fadeTo(1500, 500).slideUp(500, function(){
+          $(".alert-dismissable").fadeTo(time, 500).slideUp(500, function(){
             //$(".alert-dismissable").alert('close');
             console.log("");
           }); 
@@ -212,7 +229,7 @@ require([
     var geoValues = webMercatorUtils.xyToLngLat(evt.geometry.x, evt.geometry.y);
     var point = new Point(geoValues[0], geoValues[1], {"spatialReference":{"wkid":4326 }})
     rPolygon.contains(point);
-    if(rPolygon.contains(point) == false){executeAlert("Wrong location! Place your unit within the Boston city boundary.");}
+    if(rPolygon.contains(point) == false){executeAlert("Wrong location! Place your unit within the Boston city boundary.", 1500);}
     else{         
       map.graphics.add(new Graphic(evt.geometry, markerSymbolHigh));
       houseArray(geoValues[0], geoValues[1], "high");
@@ -228,7 +245,7 @@ require([
     var geoValues = webMercatorUtils.xyToLngLat(evt.geometry.x,evt.geometry.y);          
     var point = new Point(geoValues[0], geoValues[1], {"spatialReference":{"wkid":4326 }})
     rPolygon.contains(point);
-    if(rPolygon.contains(point) == false){executeAlert("Wrong location! Place your unit within the Boston city boundary.");}
+    if(rPolygon.contains(point) == false){executeAlert("Wrong location! Place your unit within the Boston city boundary.", 1500);}
     else{
       map.graphics.add(new Graphic(evt.geometry, markerSymbolMid));
       houseArray(geoValues[0], geoValues[1], "mid");
@@ -244,7 +261,7 @@ require([
     var geoValues = webMercatorUtils.xyToLngLat(evt.geometry.x,evt.geometry.y);
     var point = new Point(geoValues[0], geoValues[1], {"spatialReference":{"wkid":4326 }})
     rPolygon.contains(point);
-    if(rPolygon.contains(point) == false){executeAlert("Wrong location! Place your unit within the Boston city boundary.");}
+    if(rPolygon.contains(point) == false){executeAlert("Wrong location! Place your unit within the Boston city boundary.", 1500);}
     else{
       map.graphics.add(new Graphic(evt.geometry, markerSymbolLow));
       houseArray(geoValues[0], geoValues[1], "low");
@@ -268,8 +285,8 @@ require([
 
   // add to counter
   function addToCounterUnit(){          
-    document.getElementById("countunit").innerText = Number(document.getElementById("countunit").innerText) + 200;
-    document.getElementById("countunitzip").innerText = Number(document.getElementById("countunitzip").innerText) + 200;
+    document.getElementById("countunit").innerText = Number(document.getElementById("countunit").innerText) + 120;
+    document.getElementById("countunitzip").innerText = Number(document.getElementById("countunitzip").innerText) + 120;
   }
   
   // disable buttons
@@ -277,7 +294,7 @@ require([
     var housebuttons = document.getElementsByClassName("round-button-circle");
     for (var y = 0; y < housebuttons.length; y++) {housebuttons[y].disabled = true;}
     document.getElementById("unitsubmit").disabled = false;
-    document.getElementById("zipunitsubmit").disabled = false;     
+    document.getElementById("nbhunitsubmit").disabled = false;     
   }
 
   // enable buttons
@@ -285,7 +302,7 @@ require([
     var housebuttons = document.getElementsByClassName("round-button-circle");
     for (var y = 0; y < housebuttons.length; y++) {housebuttons[y].disabled = false;}
     document.getElementById("unitsubmit").disabled = true;
-    document.getElementById("zipunitsubmit").disabled = true;
+    document.getElementById("nbhunitsubmit").disabled = true;
   }
 
   function totalUnits(){    
@@ -329,13 +346,17 @@ require([
         // just in case posting your form failed
         console.log( "Posting failed." ); 
 
-    });
+  });
+    
+
     document.getElementById("countunitzip").innerText = 0;
     zicodeZoomExtent(sessionCity.zip);
     createBuffer();
     disableButtons();
     
-    document.getElementById("zipunitsubmit").disabled = true;
+    document.getElementById("nbhunitsubmit").disabled = true;
+    $("#panelCity").attr('class', 'panel collapse');
+    $("#panelNeighborhood").attr('class', 'panel collapse in');
   }
 
   // the zipcode units start here
@@ -373,7 +394,8 @@ require([
 
   function createBuffer(){
     // set up buffer style  
-    map.graphics.clear();    
+    map.graphics.clear();
+
     var bufferSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,new SimpleLineSymbol(
       SimpleLineSymbol.STYLE_SHORTDASHDOTDOT, new Color([5,5, 5]), 3), new Color([20,20,20,0.1]));
     
@@ -382,18 +404,19 @@ require([
         var geoValues = webMercatorUtils.xyToLngLat(evt.mapPoint.x,evt.mapPoint.y);
         var point = new Point(geoValues[0], geoValues[1], {"spatialReference":{"wkid":4326 }});
         if(zPolygon.contains(point) == false){
-          executeAlert("Wrong location! Place your location within the Zipcode boundary");
+          executeAlert("Wrong location! Place your location within the Zipcode boundary", 1500);
         }
         else{                
           circle = new Circle({
             center: geoValues,
             geodesic: true,
-            radius: 1,
+            radius: 0.75,
             radiusUnit: "esriMiles"            
           });
           var gBuffer = new GraphicsLayer({ id: "gBuffer"});          
-          gBuffer.add(new Graphic(circle, bufferSymbol));
-          var gIntersect = geometryEngine.intersect(zPolygonZip.graphics[0].geometry, gBuffer.graphics[0].geometry)
+          gBuffer.add(new Graphic(circle, bufferSymbol));          
+          //var gIntersect = geometryEngine.intersect(zPolygonZip.graphics[0].geometry, gBuffer.graphics[0].geometry)
+          var gIntersect = geometryEngine.intersect(rPolygonZip.graphics[0].geometry, gBuffer.graphics[0].geometry)
           gBufferCut = new GraphicsLayer({ id: "gBufferCut"});          
           gBufferCut.add(new Graphic(gIntersect, bufferSymbol));
           map.addLayer(gBufferCut);
@@ -402,7 +425,8 @@ require([
             gPolygonBuffer.addRing(item)
           });
           initToolbarZipcode();
-          enableButtons();        
+          enableButtons();
+          map.removeLayer(zPolygonZip);         
         }  
       }
       else{
@@ -427,7 +451,7 @@ require([
     // event delegation so a click handler is not
     // needed for each individual button
     //on(document.getElementById("info"), "click", function(evt) {
-    $('#infoZip').on('click', function(evt){    
+    $('#infoNeighborhood').on('click', function(evt){    
                   
       if ( evt.target.id === "info" ) {
         return;
@@ -467,8 +491,8 @@ require([
       map.graphics.remove(selected);
       var units = Number(document.getElementById("countunitzip").innerText);
       console.log(units)
-      if(units > 0 && units < 800){
-        document.getElementById("countunitzip").innerText = Number(document.getElementById("countunitzip").innerText) - 200;
+      if(units > 0 && units < 720){
+        document.getElementById("countunitzip").innerText = Number(document.getElementById("countunitzip").innerText) - 120;
       }
       else{
         return;
@@ -482,7 +506,7 @@ require([
     map.enableMapNavigation(); 
     var geoValues = webMercatorUtils.xyToLngLat(evt.geometry.x, evt.geometry.y);
     var point = new Point(geoValues[0], geoValues[1], {"spatialReference":{"wkid":4326 }})
-    if(gPolygonBuffer.contains(point) == false){executeAlert("Wrong location! Place your unit within the Buffer zone!");}
+    if(gPolygonBuffer.contains(point) == false){executeAlert("Wrong location! Place your unit within the Buffer zone!", 1500);}
     else{         
       map.graphics.add(new Graphic(evt.geometry, markerSymbolHigh));
       houseArray(geoValues[0], geoValues[1], "high");
@@ -497,7 +521,7 @@ require([
     map.enableMapNavigation();    
     var geoValues = webMercatorUtils.xyToLngLat(evt.geometry.x,evt.geometry.y);          
     var point = new Point(geoValues[0], geoValues[1], {"spatialReference":{"wkid":4326 }})
-    if(gPolygonBuffer.contains(point) == false){executeAlert("Wrong location! Place your unit within the Buffer zone!");}
+    if(gPolygonBuffer.contains(point) == false){executeAlert("Wrong location! Place your unit within the Buffer zone!", 1500);}
     else{
       map.graphics.add(new Graphic(evt.geometry, markerSymbolMid));
       houseArray(geoValues[0], geoValues[1], "mid");
@@ -512,7 +536,7 @@ require([
     map.enableMapNavigation();    
     var geoValues = webMercatorUtils.xyToLngLat(evt.geometry.x,evt.geometry.y);
     var point = new Point(geoValues[0], geoValues[1], {"spatialReference":{"wkid":4326 }})
-    if(gPolygonBuffer.contains(point) == false){executeAlert("Wrong location! Place your unit within the Buffer zone!");}
+    if(gPolygonBuffer.contains(point) == false){executeAlert("Wrong location! Place your unit within the Buffer zone!", 1500);}
     else{
       map.graphics.add(new Graphic(evt.geometry, markerSymbolLow));
       houseArray(geoValues[0], geoValues[1], "low");
@@ -522,9 +546,7 @@ require([
   }
 
   // submit zipcode units
-
-  function getZipUnitsData(){
-     
+  function getZipUnitsData(){     
     var arrHouse = [];
     var svgCityUnitObject = document.getElementById("mapViewDiv_graphics_layer");
     var svgUnits = svgCityUnitObject.getElementsByTagName("path");
@@ -551,6 +573,36 @@ require([
         alert( "Posting failed." ); 
 
     });
+    $("#panelNeighborhood").attr('class', 'panel collapse');
+    $("#panelSurvey").attr('class', 'panel collapse in');
   }
+
+  // get the survey data
+  function getSurveyData(){    
+    sessionSurvey.sessionid = time + "_"+ userhash;
+    sessionSurvey.q1 = String($("#q1 option:selected").html());
+    sessionSurvey.q2 = String($("#q2 option:selected").html());
+    sessionSurvey.q3 = Number($("#q3").val());
+    sessionSurvey.q4 = Number($("#q4").val());
+    sessionSurvey.q5 = String($("#q5 option:selected").html());
+    sessionSurvey.q6 = String($("#q6 option:selected").html());
+    sessionSurvey.q7 = String($("#q7 option:selected").html());
+    sessionSurvey.q8 = String($("#q8 option:selected").html());
+    sessionSurvey.q9 = Number($("#q9").val());
+    sessionSurvey.q10 = String($("#q10 option:selected").html());
+    sessionSurvey.q11 = String($("#q11 option:selected").html());
+        
+    var surveyJsonString = JSON.stringify(sessionSurvey);
+    console.log(surveyJsonString)
+    $.post("js/submit_3.php", { surveyJsonString: surveyJsonString }, function(data){ 
+        // show the response
+        //window.open(data);
+        console.log("survey data submitted correctly");
+
+         
+    }).fail(function() {console.log( "Posting failed." ); })
+    $("#panelSurvey").attr('class', 'panel collapse');
+    executeAlert("Thank you for your collaboration!", 5000);
+  };
 
 });// dojo
