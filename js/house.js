@@ -75,8 +75,8 @@ require([
       var bostonBoundaryRenderer = new SimpleRenderer({
         symbol: new SimpleLineSymbol({
           type: "simple-line",  // autocasts as new SimpleLineSymbol()
-          color: "red",
-          width: "2px",
+          color: "black",
+          width: "1px",
           style: "solid"
         })
       });
@@ -90,7 +90,7 @@ require([
       
       var map = new Map({
         basemap: "gray",
-        /*layers: [bostonBoundaryLayer],*/
+        layers: [bostonBoundaryLayer]
 
       });
 
