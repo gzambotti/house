@@ -69,7 +69,23 @@ require([
         yMin = 5216121.17579509;
       };
       
-      var urlBB = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonboundaryzip/FeatureServer/0/";
+      // function to collapse the panelZipcode
+      $('#panelInfo').on('click', function (e) {
+        //console.log('Event fired on #' + e.currentTarget.id);
+        $("#panelZipcode").attr('class', 'panel collapse in');
+      })
+      // graphic polygons to hold the neighborhood selection and symbol
+      var neighborhoodPoly = new GraphicsLayer();
+      var neighborhoodPolySymbol = {
+        type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+        color: [255, 0, 0, 0.25],
+        outline: {  // autocasts as new SimpleLineSymbol()
+          color: [255, 0, 0, 0.5],
+          width: "0px"
+        }
+      };
+      // Boston Zipcode Feature Service
+      var urlBB = "http://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonzip/FeatureServer/0";
       //var jsonBostonBoundary = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonboundaryzip/FeatureServer/0/query?where=1+%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&returnCentroid=false&multipatchOption=none&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson"
             
       var bostonBoundaryRenderer = new SimpleRenderer({
@@ -80,20 +96,20 @@ require([
           style: "solid"
         })
       });
-  
+      // create a Boston Boundary Fature Layer
       var bostonBoundaryLayer = new FeatureLayer({
         url: urlBB,
         outFields: ["*"],
         visible: true,
         renderer: bostonBoundaryRenderer
       });        
-      
+      // create a map
       var map = new Map({
         basemap: "gray",
         layers: [bostonBoundaryLayer]
 
       });
-
+      // create a MapView
       var view = new MapView({
         container: "mapViewDiv",
         map: map,
@@ -107,27 +123,43 @@ require([
       // Disables map rotation
       view.constraints = {rotationEnabled: false};
       
-      $('#panelInfo').on('click', function (e) {
-        //console.log('Event fired on #' + e.currentTarget.id);
-        $("#panelZipcode").attr('class', 'panel collapse in');
-      })            
-      
-      view.on("click", retriveXY);
+      // enble view click
+      view.on("click", retriveNeighborhoodSelection);
+      // x keep the House Counter
+      var x = 4;
 
-      function retriveXY(event){
-        console.log("test");
-        console.log(event.mapPoint);
+      function retriveNeighborhoodSelection(event){
+        x = x - 1
+        if(x >= 0 && x < 4){
+          console.log(x);
+          //console.log(event.mapPoint);
+          console.log(document.getElementById("housecounter").innerHTML.split(": "))
+        
+          document.getElementById("housecounter").innerHTML = "House Counter: " + x.toString();
+
+          view.whenLayerView(bostonBoundaryLayer).then(function(layerView){
+            var query = bostonBoundaryLayer.createQuery();
+
+            query.geometry = event.mapPoint;  // obtained from a view click event
+            query.spatialRelationship = "intersects";
+            bostonBoundaryLayer.queryFeatures(query).then(function(result){
+              //console.log(result.features[0].geometry);
+              var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol);
+              neighborhoodPoly.add(graphicC);
+              view.graphics.add(graphicC);
+            });
+          });  
+        }
       }
 
-      /*var f1 = document.getElementById('panelInfo');
-
-      f1.addEventListener('click', function (e) {
+      // function to remove a Neighborhood Selection Polygon
+      $('#removepoly').on('click', function (e) {
         console.log('Event fired on #' + e.currentTarget.id);
-        var c1 = document.getElementById("panelZipcode");
-        c1.collapse("show")
-        
+        view.graphics.removeAll();
+        x = 4;
+        document.getElementById("housecounter").innerHTML = "House Counter: " + x.toString();
+
         //$("#panelZipcode").attr('class', 'panel collapse in');
-      })*/
-     
+      })
                
     });
