@@ -40,6 +40,7 @@
       </a>
       <ul class="dropdown-menu">
         <li><a role="button" data-target="#panelInfo" aria-haspopup="false"><span class="glyphicon glyphicon-info-sign"></span> Info</a></li>
+        <li><a role="button" data-target="#panelNeighborhood" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Neighborhood Info</a></li> 
         <li><a role="button" data-target="#panelZipcode" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Zipcode Info</a></li>          
         <li><a role="button" id="calciteToggleNavbar" aria-haspopup="true"><span class="glyphicon glyphicon-fullscreen"></span> Full Map</a></li>
       </ul>
@@ -99,19 +100,34 @@
       </div>
     </div>
     
+    <!-- Neighborhood Panel -->          
+      <div id="panelNeighborhood" class="panel collapse">
+        <div id="headingNeighborhood" class="panel-heading" role="tab">
+          <div class="panel-title" style="background-color: rgb(196, 221, 250);">
+            <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseZipcode" data-parent="#panelAccordion" aria-expanded="true" aria-controls="collapseZipcode"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>  Neighborhood Info</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelZipcode"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapseNeighborhood" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNeighborhood">
+          <div class="panel-body">
+            <p>Step 1: Clicks on which neighborhood(s) you would like new housing to be built.</p>
+            <p id="housecounter">House Counter: 4</p>
+            <button id="removepoly" type="button" class="btn btn-default">Remove Selected neighborhood(s)</button>
+            <button id="submitpoly" type="button" class="btn btn-default">Submit neighborhood(s)</button>
+          </div>
+        </div>
+      </div>
+
     <!-- Zipcode Panel -->          
       <div id="panelZipcode" class="panel collapse">
         <div id="headingZipcode" class="panel-heading" role="tab">
-          <div class="panel-title">
+          <div class="panel-title" style="background-color: rgb(196, 221, 250);">
             <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseZipcode" data-parent="#panelAccordion" aria-expanded="true" aria-controls="collapseZipcode"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Zipcode Info</a>
             <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelZipcode"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
           </div>
         </div>
         <div id="collapseZipcode" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingZipcode">
           <div class="panel-body">
-            <p>Step 1: Clicks on which neighborhood(s) you would like new housing to be built.</p>
-            <p id="housecounter">House Counter: 4</p>
-            <button id="removepoly" type="button" class="btn btn-default">Remove Selected neighborhood(s)</button> 
             <p>Step 2: Select your zipcode. If your zipcode is not listed, then you are not eligible for this study.</p>            
             <!--<input id="zipcodetext">-->
             <select id="zipcodetext" class="form-control">
@@ -150,7 +166,6 @@
         </div>
       </div>
 
-    
 
   </div>
   <!-- /.calcite-panels -->
