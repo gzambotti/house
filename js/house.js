@@ -115,6 +115,15 @@ require([
           width: "0px"
         }
       };
+
+      var neighborhoodPolySymbol1 = {
+        type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+        color: [255, 0, 0, 0],
+        outline: {  // autocasts as new SimpleLineSymbol()
+          color: [255, 0, 0, 1],
+          width: "1px"
+        }
+      };
       // Boston Zipcode Feature Service
       var urlBB = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonzip/FeatureServer/0";
       //var jsonBostonBoundary = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonboundaryzip/FeatureServer/0/query?where=1+%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&returnCentroid=false&multipatchOption=none&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson"
@@ -228,6 +237,7 @@ require([
         y =2;
         $("#panelNeighborhood").attr('class', 'panel collapse out');
         $("#panelZipcode").attr('class', 'panel collapse in');
+        map.remove(bostonBoundaryLayer);
       }) 
 
       $('#zipcodetext').on('change', function (e) {
@@ -239,7 +249,7 @@ require([
         bostonBoundaryLayer.queryFeatures(query).then(function(result){
           console.log(result.features[0].geometry.extent);
           view.goTo(result.features[0].geometry.extent);
-          var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol);
+          var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol1);
           neighborhoodPoly.add(graphicC);
           view.graphics.add(graphicC);
         });
