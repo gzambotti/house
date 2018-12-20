@@ -69,14 +69,14 @@ require([
         yMin = 5216121.17579509;
       };
 
-      var neighbor = {
+      var neighbor = {"attributes":{
         sessionID:"",
         n0:"",
         n1:"",
         n2:"",
         n3:"",
         zipcode:""
-      };
+      }};
 
       Date.prototype.IsoNum = function (n) {
           var tzoffset = this.getTimezoneOffset() * 60000; //offset in milliseconds
@@ -201,13 +201,12 @@ require([
            
         }
         
-        /*else if (y = 2 ){
+        else if (y = 2 ){
           console.log(x); 
           console.log(event.mapPoint.latitude)
-          view.center = [event.mapPoint.longitude, event.mapPoint.latitude];
-          view.zoom = 13;
-          //foo() 
-        }*/
+          
+          //foo1() 
+        }
       }
 
       // function to remove a Neighborhood Selection Polygon
@@ -224,17 +223,19 @@ require([
       
       $('#submitpoly').on('click', function (e) {
         console.log(foo);
+        x = 0;
+        y = 2;
         for (x in foo) {
           console.log(foo[x], x)
-          if(x == 0){neighbor.n0 = foo[x]}
-          if(x == 1){neighbor.n1 = foo[x]}
-          if(x == 2){neighbor.n2 = foo[x]}
-          if(x == 3){neighbor.n3 = foo[x]}
+          if(x == 0){neighbor.attributes.n0 = foo[x]}
+          if(x == 1){neighbor.attributes.n1 = foo[x]}
+          if(x == 2){neighbor.attributes.n2 = foo[x]}
+          if(x == 3){neighbor.attributes.n3 = foo[x]}
         }
         neighbor.sessionID = userhash;
         console.log(neighbor);
         view.graphics.removeAll();
-        y =2;
+        y = 2;
         $("#panelNeighborhood").attr('class', 'panel collapse out');
         $("#panelZipcode").attr('class', 'panel collapse in');
         map.remove(bostonBoundaryLayer);
@@ -242,7 +243,8 @@ require([
 
       $('#zipcodetext').on('change', function (e) {
         //console.log('Event fired on #' + e.currentTarget.id, e);
-        console.log("ZIP_CODE = '" + $(this).val() + "'")
+        x = 0;
+        y = 2;
         view.graphics.removeAll();
         var query = bostonBoundaryLayer.createQuery();
         query.where = "ZIP_CODE = '" + $(this).val() + "'";
@@ -256,7 +258,7 @@ require([
         
       })
 
-      function foo(event){
+      function foo1(event){
           //console.log(event.mapPoint)
           view.center = [-112, 38];  // Sets the center point of the view at a specified lon/lat
           view.zoom = 13;
