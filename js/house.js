@@ -75,7 +75,9 @@ require([
         n1:"",
         n2:"",
         n3:"",
-        zipcode:""
+        zipcode:"",
+        lat:"",
+        lon:""
       }};
 
       Date.prototype.IsoNum = function (n) {
