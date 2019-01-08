@@ -9,7 +9,7 @@
   <meta name="date" content="2018-12-14" scheme="YYYY-MM-DD">
   <meta http-equiv="Content-Security-Policy" content="object-src 'self'">
 
-  <title>Building Boston</title>
+  <title>Building Boston Flask</title>
 
   <!-- Calcite Bootstrap -->
   <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-bootstrap.min-v0.2.css">
@@ -18,7 +18,7 @@
   <!-- ArcGIS JS 4 -->
   <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">  
   <!-- Custome JS 4 -->
-  <link rel="stylesheet" src="static/css/house.css"></script>  
+  <link rel="stylesheet" src="{{ url_for('static', filename='css/fdo.css') }}"></script>    
 </head>
 
 <body class="calcite-maps calcite-nav-top">
@@ -46,7 +46,7 @@
     </div>
     <!-- Title -->
     <div class="calcite-title calcite-overflow-hidden">
-      <span class="calcite-title-main">Building Boston</span>
+      <span class="calcite-title-main">Building Boston Flask</span>
       <span class="calcite-title-divider hidden-xs"></span>
       <span class="calcite-title-sub hidden-xs">TBD....</span>
     </div>
@@ -188,7 +188,7 @@
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
   
-  <script type="text/javascript" src="static/js/house.js"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/house.js') }}"></script>
  
 </body>
 </html>

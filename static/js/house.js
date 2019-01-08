@@ -266,6 +266,31 @@ require([
           view.zoom = 13;
         }
 
+      /*
+      window.onload = function() {
+        // setup the button click
+        document.getElementById("theButton").onclick = function() {
+          doWork()
+        };
+      }
 
+      function doWork() {
+        var d = new Date();  
+        var home = [{"attributes": {"id": document.getElementsByName("id")[0].value, "name": document.getElementsByName("name")[0].value,"zipcode": document.getElementsByName("zipcode")[0].value,"date": d.getTime()}}]
+        console.log(home)
+        // ajax the JSON to the server
+        /*$.post("receiver", JSON.stringify(home), function(){
+    
+      });*/
+      
+      /*
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+        xmlhttp.open("POST", "/receiver");
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xmlhttp.send(JSON.stringify(home));
+        // stop link reloading the page
+       event.preventDefault();
+      }
+      */ 
                
     });
