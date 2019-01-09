@@ -258,6 +258,17 @@ require([
           view.graphics.add(graphicC);
         });
         
+        //JSON.stringify(home)
+        
+
+      })
+
+
+      $('#zipcodeid').on('click', function (e) {
+        console.log(JSON.stringify(neighbor));
+        /*$.post("receiver", JSON.stringify(home), function(){
+    
+        });*/
       })
 
       function foo1(event){
