@@ -104,7 +104,7 @@ require([
       };
       
       var userhash = hash(10);
-      
+      console.log(userhash)
       // function to collapse the panelZipcode
       $('#panelInfo').on('click', function (e) {
         //console.log('Event fired on #' + e.currentTarget.id);
@@ -251,8 +251,10 @@ require([
         view.graphics.removeAll();
         var query = bostonBoundaryLayer.createQuery();
         query.where = "ZIP_CODE = '" + $(this).val() + "'";
+        neighbor.attributes.zipcode = $(this).val();
         bostonBoundaryLayer.queryFeatures(query).then(function(result){
           console.log(result.features[0].geometry.extent);
+          console.log(JSON.stringify(neighbor));
           view.goTo(result.features[0].geometry.extent);
           var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol1);
           neighborhoodPoly.add(graphicC);
@@ -267,9 +269,14 @@ require([
 
       $('#zipcodeid').on('click', function (e) {
         console.log(JSON.stringify(neighbor));
-        /*$.post("receiver", JSON.stringify(home), function(){
+
+        /*$.post("receiver", JSON.stringify(neighbor), function(){
     
         });*/
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+        xmlhttp.open("POST", "/receiver");
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xmlhttp.send(JSON.stringify(neighbor));
       })
 
       function foo1(event){

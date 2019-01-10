@@ -54,14 +54,14 @@ def worker():
 	# read json + reply
 	data = request.get_json(force=True)
 	
-	d = json.dumps(data[0])
+	d = json.dumps(data)
 	print (d)
 	portal(d)
-	result = ''
-	for item in data:
+	result = 'test'
+	#for item in data:
                 # loop over every row
 		#result = str(item['id']) + "-" + str(item["name"]) + "-" + str(item['zipcode']) + "-" + str(item['date'])                
-                result = 'test'
+    #            result = 'test'
 	return result
 
 ##config = configparser.ConfigParser()
@@ -74,7 +74,7 @@ gis = GIS("https://www.arcgis.com", "", "", verify_cert=False)
 # update wifi dataset (snr5, snr2.4, and nextgen)
 def portal(house_json):    
     # get the snr feature service from portal
-    snr5_features = gis.content.get('9fb9c869948e435e9fb5f2e1e8a85d50')
+    snr5_features = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
     snr5_fset = snr5_features.tables[0] #querying without any conditions returns all the features
     #snr5_fset.sdf.head()
     #all_features = snr5_fset.features
