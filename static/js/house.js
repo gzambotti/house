@@ -36,7 +36,10 @@ require([
       var xMax = -7915458.81211143;
       var xMin = -7917751.9229597915;
       var yMax = 5217414.497463334;
-      var yMin = 5216847.191394078;      
+      var yMin = 5216847.191394078;  
+      // x keep the House Counter
+      var x = 4;
+      var y = 0;    
 
       var isMobile = {
           Android: function() {
@@ -169,15 +172,13 @@ require([
       view.on("click", retriveNeighborhoodSelection);
 
       
-      // x keep the House Counter
-      var x = 4;
-      var y = 0;
+      
       
       // 
 
       function retriveNeighborhoodSelection(event){
         x = x - 1
-        console.log(x);
+        console.log("x = " + x);
         if(x >= 0 && x < 4){
           
           //console.log(event.mapPoint);
@@ -203,8 +204,8 @@ require([
            
         }
         
-        else if (y = 2 ){
-          console.log(x); 
+        else if (y == 2 ){
+          console.log("Step2: the x is: " + x + " and y is: " + y); 
           console.log(event.mapPoint.latitude)
           
           //foo1() 
@@ -224,9 +225,8 @@ require([
       //function to submit zipcode
       
       $('#submitpoly').on('click', function (e) {
-        console.log(foo);
-        x = 0;
-        y = 2;
+        console.log( "submitpoly....");
+        
         for (x in foo) {
           console.log(foo[x], x)
           if(x == 0){neighbor.attributes.n0 = foo[x]}
@@ -234,9 +234,10 @@ require([
           if(x == 2){neighbor.attributes.n2 = foo[x]}
           if(x == 3){neighbor.attributes.n3 = foo[x]}
         }
-        neighbor.sessionID = userhash;
+        neighbor.attributes.sessionID = userhash;
         console.log(neighbor);
         view.graphics.removeAll();
+        x = -1;
         y = 2;
         $("#panelNeighborhood").attr('class', 'panel collapse out');
         $("#panelZipcode").attr('class', 'panel collapse in');
@@ -245,7 +246,7 @@ require([
 
       $('#zipcodetext').on('change', function (e) {
         //console.log('Event fired on #' + e.currentTarget.id, e);
-        x = 0;
+        x = -1;
         y = 2;
         view.graphics.removeAll();
         var query = bostonBoundaryLayer.createQuery();

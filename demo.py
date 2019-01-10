@@ -64,13 +64,13 @@ def worker():
                 result = 'test'
 	return result
 
-config = configparser.ConfigParser()
+##config = configparser.ConfigParser()
 # path must be change according to the environment/OS
-config.read(r"C:\gis\p2018\wireless\script\config_house.txt")
-passwd = config.get("configuration","password")
+##config.read("/tmp/config_house.txt")
+##passwd = config.get("configuration","password")
 #print (passwd)
 
-gis = GIS("https://www.arcgis.com", "name", passwd, verify_cert=False)
+gis = GIS("https://www.arcgis.com", "", "", verify_cert=False)
 # update wifi dataset (snr5, snr2.4, and nextgen)
 def portal(house_json):    
     # get the snr feature service from portal
