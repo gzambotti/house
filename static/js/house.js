@@ -202,54 +202,33 @@ require([
         }
         
         else if (y == 2 ){
+          // retun a zipcode after a map click
           console.log("Step2: the x is: " + x + " and y is: " + y); 
           
           const point = {
-            x: event.mapPoint.latitude,
-            y: event.mapPoint.longitude,
+            type: "point", // autocasts as new Point()
+            longitude: event.mapPoint.longitude,
+            latitude: event.mapPoint.latitude,
             spatialReference:{wkid: 4326}
           };
 
-          var point1 = {
-            type: "point", // autocasts as new Point()
-            longitude: event.mapPoint.longitude,
-            latitude: event.mapPoint.latitude
-          };
-
-           var markerSymbol = {
-              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-              color: [226, 119, 40],
-              outline: { // autocasts as new SimpleLineSymbol()
-                color: [255, 255, 255],
-                width: 2
-              }
-            };
-
-            // Create a graphic and add the geometry and symbol to it
-            var pointGraphic = new Graphic({
-              geometry: point1,
-              symbol: markerSymbol
-            });
-            view.graphics.add(pointGraphic)
-
-          console.log(event.mapPoint.latitude, event.mapPoint.longitude, point1)
-          var query = bostonBoundaryLayer.createQuery();
-          //query.geometry = view.toMap(point);  // the point location of the pointer
-          query.geometry = point1;
-          //view.goTo = point1;
-          query.spatialRelationship = "touches";  // this is the default
+          console.log(event.mapPoint.latitude, event.mapPoint.longitude, point)
+          view.graphics.removeAll();
+          var query = bostonBoundaryLayer.createQuery();          
+          query.geometry = point;          
+          query.spatialRelationship = "intersects";  // this is the default
           query.returnGeometry = true;
-          //query.outFields = [ "ZIP_CODE" ];
+          query.outFields = ["ZIP_CODE"];
           console.log(query)
           bostonBoundaryLayer.queryFeatures(query).then(function(response){
-            // returns a feature set with features containing the
-            // POPULATION attribute and each feature's geometry
-            console.log(result.features[0].geometry.extent);
+            //console.log(response)
+            //console.log(result.features[0].geometry.extent);
             console.log(JSON.stringify(neighbor));
-            view.goTo(result.features[0].geometry.extent);
-            var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol1);
+            view.goTo(response.features[0].geometry.extent);
+            var graphicC = new Graphic(response.features[0].geometry, neighborhoodPolySymbol1);
             neighborhoodPoly.add(graphicC);
             view.graphics.add(graphicC);
+            document.getElementById('zipcodetext').value = response.features[0].attributes.ZIP_CODE;
           });
           // to do select zipcode by event mapPoint
           //foo1() 
