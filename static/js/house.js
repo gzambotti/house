@@ -1,5 +1,5 @@
-// code by Giovanni Zambotti - 20 July 2017
-// update to ESRI JS 4.6 - 12 April 2018
+// code by Giovanni Zambotti - 10 January 2018
+// ESRI JS 4.10
 require([
       "esri/Map",
       "esri/views/MapView",      
@@ -171,9 +171,6 @@ require([
       // enble view click
       view.on("click", retriveNeighborhoodSelection);
 
-      
-      
-      
       // 
 
       function retriveNeighborhoodSelection(event){
@@ -206,8 +203,55 @@ require([
         
         else if (y == 2 ){
           console.log("Step2: the x is: " + x + " and y is: " + y); 
-          console.log(event.mapPoint.latitude)
           
+          const point = {
+            x: event.mapPoint.latitude,
+            y: event.mapPoint.longitude,
+            spatialReference:{wkid: 4326}
+          };
+
+          var point1 = {
+            type: "point", // autocasts as new Point()
+            longitude: event.mapPoint.longitude,
+            latitude: event.mapPoint.latitude
+          };
+
+           var markerSymbol = {
+              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+              color: [226, 119, 40],
+              outline: { // autocasts as new SimpleLineSymbol()
+                color: [255, 255, 255],
+                width: 2
+              }
+            };
+
+            // Create a graphic and add the geometry and symbol to it
+            var pointGraphic = new Graphic({
+              geometry: point1,
+              symbol: markerSymbol
+            });
+            view.graphics.add(pointGraphic)
+
+          console.log(event.mapPoint.latitude, event.mapPoint.longitude, point1)
+          var query = bostonBoundaryLayer.createQuery();
+          //query.geometry = view.toMap(point);  // the point location of the pointer
+          query.geometry = point1;
+          //view.goTo = point1;
+          query.spatialRelationship = "touches";  // this is the default
+          query.returnGeometry = true;
+          //query.outFields = [ "ZIP_CODE" ];
+          console.log(query)
+          bostonBoundaryLayer.queryFeatures(query).then(function(response){
+            // returns a feature set with features containing the
+            // POPULATION attribute and each feature's geometry
+            console.log(result.features[0].geometry.extent);
+            console.log(JSON.stringify(neighbor));
+            view.goTo(result.features[0].geometry.extent);
+            var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol1);
+            neighborhoodPoly.add(graphicC);
+            view.graphics.add(graphicC);
+          });
+          // to do select zipcode by event mapPoint
           //foo1() 
         }
       }
@@ -243,6 +287,8 @@ require([
         $("#panelZipcode").attr('class', 'panel collapse in');
         map.remove(bostonBoundaryLayer);
       }) 
+
+      
 
       $('#zipcodetext').on('change', function (e) {
         //console.log('Event fired on #' + e.currentTarget.id, e);
