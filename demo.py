@@ -70,7 +70,7 @@ def worker():
 ##passwd = config.get("configuration","password")
 #print (passwd)
 
-gis = GIS("https://www.arcgis.com", "", "", verify_cert=False)
+gis = GIS("https://www.arcgis.com", os.getenv("user_house"), os.getenv("passwd_house"), verify_cert=False)
 # update wifi dataset (snr5, snr2.4, and nextgen)
 def portal(house_json):    
     # get the snr feature service from portal
