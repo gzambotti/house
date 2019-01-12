@@ -11,13 +11,11 @@ __note__= Script to update a feature service from a text file
 """
 
 #from  IPython.display import display
-import arcgis, time, json
+import arcgis, time, json, os
 from arcgis.gis import GIS
 import pandas as pd
 import numpy as np
 from copy import deepcopy
-#import argparse
-import configparser
 
 import sys
 #!flask/bin/python
@@ -63,12 +61,6 @@ def worker():
 		#result = str(item['id']) + "-" + str(item["name"]) + "-" + str(item['zipcode']) + "-" + str(item['date'])                
     #            result = 'test'
 	return result
-
-##config = configparser.ConfigParser()
-# path must be change according to the environment/OS
-##config.read("/tmp/config_house.txt")
-##passwd = config.get("configuration","password")
-#print (passwd)
 
 gis = GIS("https://www.arcgis.com", os.getenv("user_house"), os.getenv("passwd_house"), verify_cert=False)
 # update wifi dataset (snr5, snr2.4, and nextgen)

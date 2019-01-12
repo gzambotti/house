@@ -223,12 +223,13 @@ require([
           bostonBoundaryLayer.queryFeatures(query).then(function(response){
             //console.log(response)
             //console.log(result.features[0].geometry.extent);
-            console.log(JSON.stringify(neighbor));
             view.goTo(response.features[0].geometry.extent);
             var graphicC = new Graphic(response.features[0].geometry, neighborhoodPolySymbol1);
             neighborhoodPoly.add(graphicC);
             view.graphics.add(graphicC);
             document.getElementById('zipcodetext').value = response.features[0].attributes.ZIP_CODE;
+            neighbor.attributes.zipcode = response.features[0].attributes.ZIP_CODE;
+            console.log(JSON.stringify(neighbor));
           });
           // to do select zipcode by event mapPoint
           //foo1() 
