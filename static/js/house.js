@@ -17,6 +17,11 @@ require([
       "esri/Color",
       "esri/geometry/Extent",
       "esri/widgets/Popup",
+      "esri/geometry/geometryEngine",
+      "esri/geometry/SpatialReference",
+      "esri/geometry/Circle",
+      "esri/geometry/support/webMercatorUtils",
+      "esri/geometry/Point",
 
       // Bootstrap
       "bootstrap/Dropdown",
@@ -29,19 +34,20 @@ require([
     ], //function(Map, MapView, FeatureLayer, GraphicsLayer,Graphic, MapImageLayer, TileLayer, SimpleRenderer, SimpleMarkerSymbol, 
       //SimpleFillSymbol, UniqueValueRenderer) {
       function(Map, MapView, Locate, FeatureLayer, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
-      SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup) { 
+      SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Circle, webMercatorUtils, Point) { 
       var foo = [];
-      var myzoom = 12, lon = -71.05, lat = 42.32;
+      const myzoom = 12, lon = -71.05, lat = 42.32;
 
-      var xMax = -7915458.81211143;
-      var xMin = -7917751.9229597915;
-      var yMax = 5217414.497463334;
-      var yMin = 5216847.191394078;  
+      const xMax = -7915458.81211143;
+      const xMin = -7917751.9229597915;
+      const yMax = 5217414.497463334;
+      const yMin = 5216847.191394078;  
       // x keep the House Counter
       var x = 4;
-      var y = 0;    
+      var y = 0;
+      //var circle;    
 
-      var isMobile = {
+      const isMobile = {
           Android: function() {
               return navigator.userAgent.match(/Android/i);
           },
@@ -72,7 +78,7 @@ require([
         yMin = 5216121.17579509;
       };
 
-      var neighbor = {"attributes":{
+      const neighbor = {"attributes":{
         sessionID:"",
         n0:"",
         n1:"",
@@ -129,10 +135,16 @@ require([
           width: "1px"
         }
       };
-      // Boston Zipcode Feature Service
-      var urlBB = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonzip/FeatureServer/0";
-      //var jsonBostonBoundary = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonboundaryzip/FeatureServer/0/query?where=1+%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=&units=esriSRUnit_Meter&returnGeodetic=false&outFields=&returnGeometry=true&returnCentroid=false&multipatchOption=none&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pjson"
-            
+
+      var bufferSymbol = {
+        type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+        color: [255, 0, 255, 0],
+        outline: {  // autocasts as new SimpleLineSymbol()
+          color: [255, 0, 255, 1],
+          width: "1px"
+        }
+      };
+
       var bostonBoundaryRenderer = new SimpleRenderer({
         symbol: new SimpleLineSymbol({
           type: "simple-line",  // autocasts as new SimpleLineSymbol()
@@ -141,17 +153,47 @@ require([
           style: "solid"
         })
       });
-      // create a Boston Boundary Fature Layer
+
+      // Create a symbol for drawing the point
+      var bostonPointRenderer = {
+        type: "simple",  // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+          size: 6,
+          color: "red",
+          outline: {  // autocasts as new SimpleLineSymbol()
+            width: 0.5,
+            color: "white"
+          }
+        }
+      };
+      // Boston Zipcode Feature Service
+      var urlBB = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonzip/FeatureServer/0";
+      // Bosron Zipcode Random points Feature Service
+      var urlBP = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/point20/FeatureServer/0";
+      
+
+     
+      // create a Boston Boundary Future Layer
       var bostonBoundaryLayer = new FeatureLayer({
         url: urlBB,
         outFields: ["*"],
         visible: true,
         renderer: bostonBoundaryRenderer
-      });        
+      });
+
+      
+      // create a Boston Zipcode Point Future Layer        
+      var bostonPointLayer = new FeatureLayer({
+        url: urlBP,
+        outFields: ["*"],
+        visible: true,
+        renderer: bostonPointRenderer
+      });
       // create a map
       var map = new Map({
         basemap: "gray",
-        layers: [bostonBoundaryLayer]
+        layers: [bostonBoundaryLayer, bostonPointLayer]
 
       });
       // create a MapView
@@ -184,21 +226,19 @@ require([
           document.getElementById("housecounter").innerHTML = "House Counter: " + x.toString();
 
           //view.whenLayerView(bostonBoundaryLayer).then(function(layerView){
-            var query = bostonBoundaryLayer.createQuery();
+          var query = bostonBoundaryLayer.createQuery();
 
-            query.geometry = event.mapPoint;  // obtained from a view click event
-            query.spatialRelationship = "intersects";
-            bostonBoundaryLayer.queryFeatures(query).then(function(result){
-              console.log(result.features[0].attributes.NAME, x);
+          query.geometry = event.mapPoint;  // obtained from a view click event
+          query.spatialRelationship = "intersects";
+          bostonBoundaryLayer.queryFeatures(query).then(function(result){
+            console.log(result.features[0].attributes.NAME, x);
              
-              var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol);
-              neighborhoodPoly.add(graphicC);
-              view.graphics.add(graphicC);
-              foo.push(result.features[0].attributes.NAME);
-            });
-            
-          //});
-           
+            var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol);
+            neighborhoodPoly.add(graphicC);
+            view.graphics.add(graphicC);
+            foo.push(result.features[0].attributes.NAME);
+          });            
+          //});           
         }
         
         else if (y == 2 ){
@@ -231,7 +271,8 @@ require([
             document.getElementById('zipcodetext').value = response.features[0].attributes.ZIP_CODE;
           });
           // to do select zipcode by event mapPoint
-          //foo1() 
+          //foo1()
+          createBuffer(event.mapPoint.longitude, event.mapPoint.latitude); 
         }
       }
 
@@ -310,6 +351,42 @@ require([
           view.zoom = 13;
         }
 
+
+      function createBuffer(x,y){
+        
+            var point = new Point(x, y, {"spatialReference":{"wkid":4326 }});
+            console.log(point)
+                            
+              var circle = new Circle({
+                center: point,
+                geodesic: true,
+                radius: 0.75,
+                radiusUnit: "miles"            
+              });
+
+              var gBuffer = new GraphicsLayer();          
+              
+
+              var graphicC = new Graphic(circle, bufferSymbol);
+              //gBuffer.add(graphicC);
+              view.graphics.add(graphicC);
+              
+
+              var query = bostonPointLayer.createQuery();
+
+              query.geometry = graphicC;  // obtained from a view click event
+              query.spatialRelationship = "intersects";
+              bostonPointLayer.queryFeatures(query).then(function(result){
+                console.log(result);
+                 
+                //var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol);
+                //neighborhoodPoly.add(graphicC);
+                //view.graphics.add(graphicC);
+                
+              });
+         
+      }  
+        
       /*
       window.onload = function() {
         // setup the button click
