@@ -18,9 +18,7 @@ require([
       "esri/geometry/Extent",
       "esri/widgets/Popup",
       "esri/geometry/geometryEngine",
-      "esri/geometry/SpatialReference",
-      "esri/geometry/Circle",
-      "esri/geometry/support/webMercatorUtils",
+      "esri/geometry/SpatialReference",      
       "esri/geometry/Point",
 
       // Bootstrap
@@ -34,8 +32,9 @@ require([
     ], //function(Map, MapView, FeatureLayer, GraphicsLayer,Graphic, MapImageLayer, TileLayer, SimpleRenderer, SimpleMarkerSymbol, 
       //SimpleFillSymbol, UniqueValueRenderer) {
       function(Map, MapView, Locate, FeatureLayer, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
-      SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Circle, webMercatorUtils, Point) { 
-      var foo = [];
+      SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Point) { 
+      var nameNeighborList = [];
+      var f1= [];
       const myzoom = 12, lon = -71.05, lat = 42.32;
 
       const xMax = -7915458.81211143;
@@ -89,6 +88,8 @@ require([
         lon:""
       }};
 
+      const pObject = {id:"", lat:"", lon:""}
+
       Date.prototype.IsoNum = function (n) {
           var tzoffset = this.getTimezoneOffset() * 60000; //offset in milliseconds
           var localISOTime = (new Date(this - tzoffset)).toISOString().slice(0,-1);
@@ -116,9 +117,11 @@ require([
         //console.log('Event fired on #' + e.currentTarget.id);
         $("#panelNeighborhood").attr('class', 'panel collapse in');
       })
-      var resultsLayer = new GraphicsLayer();
+      // graphic point to hold all the points within a buffer 
+      var resultsPointLayer = new GraphicsLayer();
       // graphic polygons to hold the neighborhood selection and symbol
       var neighborhoodPoly = new GraphicsLayer();
+      // style to display polygon zipcode
       var neighborhoodPolySymbol = {
         type: "simple-fill",  // autocasts as new SimpleFillSymbol()
         color: [255, 0, 0, 0.25],
@@ -127,8 +130,8 @@ require([
           width: "0px"
         }
       };
-
-      var neighborhoodPolySymbol1 = {
+      // style to display polygon zipcode after selections
+      var neighborhoodPolySymbolSelect = {
         type: "simple-fill",  // autocasts as new SimpleFillSymbol()
         color: [255, 0, 0, 0],
         outline: {  // autocasts as new SimpleLineSymbol()
@@ -154,27 +157,12 @@ require([
           style: "solid"
         })
       });
-
-      // Create a symbol for drawing the point
-      var bostonPointRenderer = {
-        type: "simple",  // autocasts as new SimpleRenderer()
-        symbol: {
-          type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
-          size: 6,
-          color: "red",
-          outline: {  // autocasts as new SimpleLineSymbol()
-            width: 0.5,
-            color: "white"
-          }
-        }
-      };
+      
       // Boston Zipcode Feature Service
       var urlBB = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonzip/FeatureServer/0";
-      // Bosron Zipcode Random points Feature Service
+      // Boston Points Feature Service
       var urlBP = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/point20/FeatureServer/0";
-      
-
-     
+           
       // create a Boston Boundary Future Layer
       var bostonBoundaryLayer = new FeatureLayer({
         url: urlBB,
@@ -182,19 +170,17 @@ require([
         visible: true,
         renderer: bostonBoundaryRenderer
       });
-
       
       // create a Boston Zipcode Point Future Layer        
       var bostonPointLayer = new FeatureLayer({
         url: urlBP,
         outFields: ["*"],
-        visible: true,
-        renderer: bostonPointRenderer
+        visible: false
       });
       // create a map
       var map = new Map({
         basemap: "gray",
-        layers: [bostonBoundaryLayer, resultsLayer]
+        layers: [bostonBoundaryLayer, resultsPointLayer]
 
       });
       // create a MapView
@@ -206,11 +192,9 @@ require([
         padding: {top: 50, bottom: 0}, 
         breakpoints: {xsmall: 768, small: 769, medium: 992, large: 1200}        
       });
-
       
       // Disables map rotation
-      view.constraints = {rotationEnabled: false};
-      
+      view.constraints = {rotationEnabled: false};      
       // enble view click
       view.on("click", retriveNeighborhoodSelection);
 
@@ -237,15 +221,14 @@ require([
             var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol);
             neighborhoodPoly.add(graphicC);
             view.graphics.add(graphicC);
-            foo.push(result.features[0].attributes.NAME);
+            nameNeighborList.push(result.features[0].attributes.NAME);
           });            
           //});           
         }
         
-        else if (y == 2 ){
+        else if (y == 2){
           // retun a zipcode after a map click
-          console.log("Step2: the x is: " + x + " and y is: " + y); 
-          
+          console.log("Step2: the x is: " + x + " and y is: " + y);           
           const point = {
             type: "point", // autocasts as new Point()
             longitude: event.mapPoint.longitude,
@@ -265,16 +248,15 @@ require([
             //console.log(response)
             //console.log(result.features[0].geometry.extent);
             view.goTo(response.features[0].geometry.extent);
-            var graphicC = new Graphic(response.features[0].geometry, neighborhoodPolySymbol1);
+            var graphicC = new Graphic(response.features[0].geometry, neighborhoodPolySymbolSelect);
             neighborhoodPoly.add(graphicC);
             view.graphics.add(graphicC);
             document.getElementById('zipcodetext').value = response.features[0].attributes.ZIP_CODE;
             neighbor.attributes.zipcode = response.features[0].attributes.ZIP_CODE;
             console.log(JSON.stringify(neighbor));
           });
-          // to do select zipcode by event mapPoint
-          //foo1()
-          createBuffer(event.mapPoint.longitude, event.mapPoint.latitude).then(displayResults); 
+          // to do select zipcode by event mapPoint          
+          createBuffer(event.mapPoint.longitude, event.mapPoint.latitude).then(displayPoints); 
         }
       }
 
@@ -284,21 +266,20 @@ require([
         view.graphics.removeAll();
         x = 4;
         document.getElementById("housecounter").innerHTML = "House Counter: " + x.toString();
-        foo = [];
+        nameNeighborList = [];
         //$("#panelZipcode").attr('class', 'panel collapse in');
       })
 
-      //function to submit zipcode
+      // submit the zipcode
       
       $('#submitpoly').on('click', function (e) {
-        console.log( "submitpoly....");
-        
-        for (x in foo) {
-          console.log(foo[x], x)
-          if(x == 0){neighbor.attributes.n0 = foo[x]}
-          if(x == 1){neighbor.attributes.n1 = foo[x]}
-          if(x == 2){neighbor.attributes.n2 = foo[x]}
-          if(x == 3){neighbor.attributes.n3 = foo[x]}
+        console.log( "submitpoly....");        
+        for (x in nameNeighborList) {
+          console.log(nameNeighborList[x], x)
+          if(x == 0){neighbor.attributes.n0 = nameNeighborList[x]}
+          if(x == 1){neighbor.attributes.n1 = nameNeighborList[x]}
+          if(x == 2){neighbor.attributes.n2 = nameNeighborList[x]}
+          if(x == 3){neighbor.attributes.n3 = nameNeighborList[x]}
         }
         neighbor.attributes.sessionID = userhash;
         console.log(neighbor);
@@ -324,17 +305,13 @@ require([
           console.log(result.features[0].geometry.extent);
           console.log(JSON.stringify(neighbor));
           view.goTo(result.features[0].geometry.extent);
-          var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol1);
+          var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbolSelect);
           neighborhoodPoly.add(graphicC);
           view.graphics.add(graphicC);
-        });
-        
-        //JSON.stringify(home)
-        
-
+        });        
       })
 
-
+      // push data to AGOL on button click
       $('#zipcodeid').on('click', function (e) {
         console.log(JSON.stringify(neighbor));
 
@@ -345,61 +322,90 @@ require([
         xmlhttp.open("POST", "/receiver");
         xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xmlhttp.send(JSON.stringify(neighbor));
+        
+        $("#panelZipcode").attr('class', 'panel collapse out');
+        $("#panelPoints").attr('class', 'panel collapse in');
       })
 
-      function foo1(event){
-          //console.log(event.mapPoint)
-          view.center = [-112, 38];  // Sets the center point of the view at a specified lon/lat
-          view.zoom = 13;
-        }
+      // create a 0.75 miles buffer on map click
+      function createBuffer(x,y){        
+        var point = new Point(x, y, {"spatialReference":{"wkid":4326 }});    
+        var pBuffer = geometryEngine.geodesicBuffer(point, 0.5, "miles", true);
+        var bGraphic = new Graphic({
+            geometry: pBuffer,
+            symbol: {
+            type: "simple-fill", // autocasts as new SimpleFillSymbol()
+            outline: {
+              width: 1,
+              color: [0, 0, 255]
+            },
+            style: "none"
+          }
+        });
+        //view.graphics.removeAll();
+        view.graphics.add(bGraphic);
+        var query = bostonPointLayer.createQuery();
 
-
-      function createBuffer(x,y){
-        
-            var point = new Point(x, y, {"spatialReference":{"wkid":4326 }});
-    
-            var pBuffer = geometryEngine.geodesicBuffer(point, 0.75, "miles", true);
-            var bGraphic = new Graphic({
-                geometry: pBuffer,
-                symbol: {
-                type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                outline: {
-                  width: 1,
-                  color: [0, 0, 255]
-                },
-                style: "none"
-              }
-            });
-            //view.graphics.removeAll();
-            view.graphics.add(bGraphic);
-            var query = bostonPointLayer.createQuery();
-
-            query.geometry = pBuffer;  // obtained from a view click event
-            query.spatialRelationship = "intersects";
-            
-            /*bostonPointLayer.queryFeatures(query).then(function(result){
-              console.log(result);
-              
-              
-            });*/
-            return bostonPointLayer.queryFeatures(query);
-         
+        query.geometry = pBuffer;  // obtained from a view click event
+        query.spatialRelationship = "intersects";        
+        /*bostonPointLayer.queryFeatures(query).then(function(result){
+          console.log(result);          
+        });*/
+        return bostonPointLayer.queryFeatures(query);         
       }  
-        
-      function displayResults(results) {
-          console.log(results)
-          resultsLayer.removeAll();
+      
+      // add Points within the buffer  
+      function displayPoints(results) {
+          results.features.forEach(myFunction);
+
+          resultsPointLayer.removeAll();
           var features = results.features.map(function (graphic) {
             graphic.symbol = {
               type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
               style: "circle",
               size: 6.5,
-              color: "darkorange"
+              color: "red",
+              outline: {  // autocasts as new SimpleLineSymbol()
+                width: 0.5,
+                color: "white"
+              }
             };
             return graphic;
           });
-          resultsLayer.addMany(features);
-        }  
+          resultsPointLayer.addMany(features);
+      }
+
+      function myFunction(value) {
+        console.log(value)
+        var node = document.createElement("li");
+        node.setAttribute("id", '"' + value.attributes['OBJECTID'] + '"');
+        var textnode = document.createTextNode(value.attributes['ZIP_CODE']);
+        node.appendChild(textnode);        
+        document.getElementById("plist").appendChild(node);
+        pObject.id = value.attributes['OBJECTID'] ;
+        pObject.lat = value.geometry.latitude ;
+        pObject.lon = value.geometry.longitude;
+        f1.push(pObject)
+      }
+
+      document.getElementById("plist").addEventListener("click",function(e) {
+        // e.target is our targetted element.
+                    // try doing console.log(e.target.nodeName), it will result LI
+        if(e.target && e.target.nodeName == "LI") {
+            console.log(e.target.id + " was clicked");
+            console.log(f1)
+            //getInfoByID( e.target.id, pObject )
+        }
+      });
+
+      function getInfoByID( id, obj ){
+        //var object = { ... };
+        for(var x in obj.results) {
+          if(obj.results[x].id == id) {
+            return [obj.results[x].loc, obj.results[x].name];
+          }
+        }
+      }  
       /*
       window.onload = function() {
         // setup the button click

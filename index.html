@@ -75,31 +75,31 @@
 
   <div class="calcite-panels calcite-panels-right calcite-text-dark calcite-bg-dark panel-group" style="background-color: rgb(196, 221, 250);">
 
-    <!-- Info Panel -->
-    <div id="panelInfo" class="panel collapse in">
-      <div id="headingInfo" class="panel-heading" role="tab">
-        <div class="panel-title" style="background-color: rgb(196, 221, 250);">
-          <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseInfo"
-            aria-expanded="false" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign
-" aria-hidden="true"></span><span class="panel-label">Info</span></a>
-          <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+      <!-- Info Panel -->
+      <div id="panelInfo" class="panel collapse in">
+        <div id="headingInfo" class="panel-heading" role="tab">
+          <div class="panel-title" style="background-color: rgb(196, 221, 250);">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseInfo"
+              aria-expanded="false" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign
+  " aria-hidden="true"></span><span class="panel-label">Info</span></a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
 
+          </div>
+        </div>
+        <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
+          <div class="panel-body">
+            As more people move to Boston, the City needs to decide where new homes and apartments
+            should be built. In this activity, you will decide where 600 units of market rate housing should be built in Boston.
+            You will be given 5 buildings, each containing 120 units of housing, to place within Boston. To
+            place a building, click on the building’s button, then clicking on the location where you would like  
+            that building to go. To start click the "x" button on the top right.
+            <!--<img src="css/images/house.gif" alt="house" height="200" width="300">        -->
+            <video width="300" height="200" autoplay controls><source src="http://maps.cga.harvard.edu/housing/css/images/movie.m4v" type="video/mp4"></video>
+          </div>
         </div>
       </div>
-      <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
-        <div class="panel-body">
-          As more people move to Boston, the City needs to decide where new homes and apartments
-          should be built. In this activity, you will decide where 600 units of market rate housing should be built in Boston.
-          You will be given 5 buildings, each containing 120 units of housing, to place within Boston. To
-          place a building, click on the building’s button, then clicking on the location where you would like  
-          that building to go. To start click the "x" button on the top right.
-          <!--<img src="css/images/house.gif" alt="house" height="200" width="300">        -->
-          <video width="300" height="200" autoplay controls><source src="http://maps.cga.harvard.edu/housing/css/images/movie.m4v" type="video/mp4"></video>
-        </div>
-      </div>
-    </div>
     
-    <!-- Neighborhood Panel -->          
+      <!-- Neighborhood Panel -->          
       <div id="panelNeighborhood" class="panel collapse">
         <div id="headingNeighborhood" class="panel-heading" role="tab">
           <div class="panel-title" style="background-color: rgb(196, 221, 250);">
@@ -117,7 +117,7 @@
         </div>
       </div>
 
-    <!-- Zipcode Panel -->          
+      <!-- Zipcode Panel -->          
       <div id="panelZipcode" class="panel collapse">
         <div id="headingZipcode" class="panel-heading" role="tab">
           <div class="panel-title" style="background-color: rgb(196, 221, 250);">
@@ -166,6 +166,22 @@
         </div>
       </div>
 
+      <!-- Points Panel -->          
+      <div id="panelPoints" class="panel collapse">
+        <div id="headingPoints" class="panel-heading" role="tab">
+          <div class="panel-title" style="background-color: rgb(196, 221, 250);">
+            <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseZipcode" data-parent="#panelAccordion" aria-expanded="true" aria-controls="collapseZipcode"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Points Info</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelZipcode"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapsePoints" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPoints">
+          <div class="panel-body">
+            <p>To DO: Make a Point List</p>
+            <ol id="plist"></ol>
+            
+          </div>
+        </div>
+      </div>
 
   </div>
   <!-- /.calcite-panels -->
