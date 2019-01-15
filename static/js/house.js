@@ -116,6 +116,7 @@ require([
         //console.log('Event fired on #' + e.currentTarget.id);
         $("#panelNeighborhood").attr('class', 'panel collapse in');
       })
+      var resultsLayer = new GraphicsLayer();
       // graphic polygons to hold the neighborhood selection and symbol
       var neighborhoodPoly = new GraphicsLayer();
       var neighborhoodPolySymbol = {
@@ -193,7 +194,7 @@ require([
       // create a map
       var map = new Map({
         basemap: "gray",
-        layers: [bostonBoundaryLayer, bostonPointLayer]
+        layers: [bostonBoundaryLayer, resultsLayer]
 
       });
       // create a MapView
@@ -273,7 +274,7 @@ require([
           });
           // to do select zipcode by event mapPoint
           //foo1()
-          createBuffer(event.mapPoint.longitude, event.mapPoint.latitude); 
+          createBuffer(event.mapPoint.longitude, event.mapPoint.latitude).then(displayResults); 
         }
       }
 
@@ -356,38 +357,49 @@ require([
       function createBuffer(x,y){
         
             var point = new Point(x, y, {"spatialReference":{"wkid":4326 }});
-            console.log(point)
-                            
-              var circle = new Circle({
-                center: point,
-                geodesic: true,
-                radius: 0.75,
-                radiusUnit: "miles"            
-              });
+    
+            var pBuffer = geometryEngine.geodesicBuffer(point, 0.75, "miles", true);
+            var bGraphic = new Graphic({
+                geometry: pBuffer,
+                symbol: {
+                type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                outline: {
+                  width: 1,
+                  color: [0, 0, 255]
+                },
+                style: "none"
+              }
+            });
+            //view.graphics.removeAll();
+            view.graphics.add(bGraphic);
+            var query = bostonPointLayer.createQuery();
 
-              var gBuffer = new GraphicsLayer();          
+            query.geometry = pBuffer;  // obtained from a view click event
+            query.spatialRelationship = "intersects";
+            
+            /*bostonPointLayer.queryFeatures(query).then(function(result){
+              console.log(result);
               
-
-              var graphicC = new Graphic(circle, bufferSymbol);
-              //gBuffer.add(graphicC);
-              view.graphics.add(graphicC);
               
-
-              var query = bostonPointLayer.createQuery();
-
-              query.geometry = graphicC;  // obtained from a view click event
-              query.spatialRelationship = "intersects";
-              bostonPointLayer.queryFeatures(query).then(function(result){
-                console.log(result);
-                 
-                //var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbol);
-                //neighborhoodPoly.add(graphicC);
-                //view.graphics.add(graphicC);
-                
-              });
+            });*/
+            return bostonPointLayer.queryFeatures(query);
          
       }  
         
+      function displayResults(results) {
+          console.log(results)
+          resultsLayer.removeAll();
+          var features = results.features.map(function (graphic) {
+            graphic.symbol = {
+              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+              style: "circle",
+              size: 6.5,
+              color: "darkorange"
+            };
+            return graphic;
+          });
+          resultsLayer.addMany(features);
+        }  
       /*
       window.onload = function() {
         // setup the button click
