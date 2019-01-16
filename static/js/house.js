@@ -20,6 +20,7 @@ require([
       "esri/geometry/geometryEngine",
       "esri/geometry/SpatialReference",      
       "esri/geometry/Point",
+      "esri/geometry/support/webMercatorUtils",
 
       // Bootstrap
       "bootstrap/Dropdown",
@@ -32,7 +33,7 @@ require([
     ], //function(Map, MapView, FeatureLayer, GraphicsLayer,Graphic, MapImageLayer, TileLayer, SimpleRenderer, SimpleMarkerSymbol, 
       //SimpleFillSymbol, UniqueValueRenderer) {
       function(Map, MapView, Locate, FeatureLayer, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
-      SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Point) { 
+      SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Point, webMercatorUtils) { 
       var nameNeighborList = [];
       var highlightSelect;
       const myzoom = 12, lon = -71.05, lat = 42.32;
@@ -119,6 +120,7 @@ require([
       })
       // graphic point to hold all the points within a buffer 
       var resultsPointLayer = new GraphicsLayer();
+      var resultsPointLayer2 = new GraphicsLayer();
       // graphic polygons to hold the neighborhood selection and symbol
       var neighborhoodPoly = new GraphicsLayer();
       // style to display polygon zipcode
@@ -149,6 +151,18 @@ require([
         }
       };
 
+      var pSymbol = {
+        symbol: {
+      type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+      color: "yellow",
+      size: 14,
+      outline: { // autocasts as new SimpleLineSymbol()
+        width: 3.5,
+        color: "darkblue"
+      }
+    }
+      };
+
       var bostonBoundaryRenderer = new SimpleRenderer({
         symbol: new SimpleLineSymbol({
           type: "simple-line",  // autocasts as new SimpleLineSymbol()
@@ -157,11 +171,24 @@ require([
           style: "solid"
         })
       });
+
+      var bostonPointRenderer = {
+        type: "simple",  // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+          size: 6,
+          color: "red",
+          outline: {  // autocasts as new SimpleLineSymbol()
+            width: 1,
+            color: "black"
+          }
+        }
+      };
       
       // Boston Zipcode Feature Service
       var urlBB = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/bostonzip/FeatureServer/0";
       // Boston Points Feature Service
-      var urlBP = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/point20/FeatureServer/0";
+      var urlBP = "https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/point20wgs/FeatureServer/0";
            
       // create a Boston Boundary Future Layer
       var bostonBoundaryLayer = new FeatureLayer({
@@ -175,8 +202,10 @@ require([
       var bostonPointLayer = new FeatureLayer({
         url: urlBP,
         outFields: ["*"],
-        visible: true
+        visible: false,
+        renderer: bostonPointRenderer
       });
+
       // create a map
       var map = new Map({
         basemap: "gray",
@@ -261,6 +290,7 @@ require([
           });
           // to do select zipcode by event mapPoint          
           createBuffer(event.mapPoint.longitude, event.mapPoint.latitude).then(displayPoints); 
+          
         }
       }
 
@@ -311,7 +341,7 @@ require([
           view.goTo(result.features[0].geometry.extent);
           var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbolSelect);
           neighborhoodPoly.add(graphicC);
-          view.graphics.add(graphicC);
+          //view.graphics.add(graphicC);
         });        
       })
 
@@ -331,7 +361,32 @@ require([
         $("#panelPoints").attr('class', 'panel collapse in');
       })
 
-
+      view.whenLayerView(bostonPointLayer).then(function(layerView) {
+        console.log('ready!!!!!');
+        var query = bostonPointLayer.createQuery();
+        query.returnGeometry = true;
+        document.getElementById("plist").addEventListener("click",function(e) {
+          // e.target is our targetted element.
+          // try doing console.log(e.target.nodeName), it will result LI
+          if(e.target && e.target.nodeName == "LI") {              
+              console.log(e.target.id.toString() + " was clicked");
+              query.where = 'OBJECTID = ' + e.target.id;
+              
+              bostonPointLayer.queryFeatures(query).then(function(result) {
+                  console.log(result.features[0].geometry)
+                  // the feature to be highlighted
+                  var graphicC = new Graphic(result.features[0].geometry, pSymbol);
+                  resultsPointLayer2.add(graphicC);
+                  console.log(graphicC)
+                  view.graphics.add(graphicC);
+                  
+                  // use the objectID to highlight the feature
+                  //highlightSelect = layerView.highlight(feature.attributes["OBJECTID"]);
+                  
+                });
+              }
+            });
+      });
        
 
       // create a 0.75 miles buffer on map click
@@ -358,35 +413,13 @@ require([
         /*bostonPointLayer.queryFeatures(query).then(function(result){
           console.log(result);          
         });*/
+        //bostonPointLayer.queryFeatures(query); 
+        
         return bostonPointLayer.queryFeatures(query);         
       }
 
 
-      view.whenLayerView(bostonPointLayer).then(function(layerView) {
-        console.log('ready!!!!!');
-        var queryStations = bostonPointLayer.createQuery();
-
-        document.getElementById("plist").addEventListener("click",function(e) {
-          // e.target is our targetted element.
-          // try doing console.log(e.target.nodeName), it will result LI
-          if(e.target && e.target.nodeName == "LI") {
-              
-              console.log(e.target.id.toString() + " was clicked");
-
-              queryStations.where = 'OBJECTID = ' + e.target.id;
-              console.log(queryStations.where)
-              bostonPointLayer.queryFeatures(queryStations).then(
-                function(result) {
-                  // the feature to be highlighted
-                  
-                  var feature = result.features[0];
-                  console.log(feature)
-                  // use the objectID to highlight the feature
-                  highlightSelect = layerView.highlight(feature.attributes["OBJECTID"]);
-                });
-              }
-            });
-      });
+      
       // add Points within the buffer  
       function displayPoints(results) {
           results.features.forEach(myFunction);
@@ -417,7 +450,8 @@ require([
         document.getElementById("plist").appendChild(node);
         
       }
-  
+      
+      
       /*
       window.onload = function() {
         // setup the button click
