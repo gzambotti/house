@@ -34,7 +34,7 @@ require([
       function(Map, MapView, Locate, FeatureLayer, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
       SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Point) { 
       var nameNeighborList = [];
-      var f1= [];
+      var highlightSelect;
       const myzoom = 12, lon = -71.05, lat = 42.32;
 
       const xMax = -7915458.81211143;
@@ -88,7 +88,7 @@ require([
         lon:""
       }};
 
-      const pObject = {id:"", lat:"", lon:""}
+      var pObject = {id:"", lat:"", lon:""}
 
       Date.prototype.IsoNum = function (n) {
           var tzoffset = this.getTimezoneOffset() * 60000; //offset in milliseconds
@@ -175,12 +175,12 @@ require([
       var bostonPointLayer = new FeatureLayer({
         url: urlBP,
         outFields: ["*"],
-        visible: false
+        visible: true
       });
       // create a map
       var map = new Map({
         basemap: "gray",
-        layers: [bostonBoundaryLayer, resultsPointLayer]
+        layers: [bostonBoundaryLayer, resultsPointLayer, bostonPointLayer]
 
       });
       // create a MapView
@@ -190,7 +190,11 @@ require([
         center: [lon, lat], /*-71.11607611178287, 42.37410778220068*/
         zoom: myzoom,        
         padding: {top: 50, bottom: 0}, 
-        breakpoints: {xsmall: 768, small: 769, medium: 992, large: 1200}        
+        breakpoints: {xsmall: 768, small: 769, medium: 992, large: 1200},
+        highlightOptions: {
+          color: [255, 255, 0],
+          fillOpacity: 0.4
+        }       
       });
       
       // Disables map rotation
@@ -327,10 +331,13 @@ require([
         $("#panelPoints").attr('class', 'panel collapse in');
       })
 
+
+       
+
       // create a 0.75 miles buffer on map click
       function createBuffer(x,y){        
         var point = new Point(x, y, {"spatialReference":{"wkid":4326 }});    
-        var pBuffer = geometryEngine.geodesicBuffer(point, 0.5, "miles", true);
+        var pBuffer = geometryEngine.geodesicBuffer(point, 0.2, "miles", true);
         var bGraphic = new Graphic({
             geometry: pBuffer,
             symbol: {
@@ -352,12 +359,38 @@ require([
           console.log(result);          
         });*/
         return bostonPointLayer.queryFeatures(query);         
-      }  
-      
+      }
+
+
+      view.whenLayerView(bostonPointLayer).then(function(layerView) {
+        console.log('ready!!!!!');
+        var queryStations = bostonPointLayer.createQuery();
+
+        document.getElementById("plist").addEventListener("click",function(e) {
+          // e.target is our targetted element.
+          // try doing console.log(e.target.nodeName), it will result LI
+          if(e.target && e.target.nodeName == "LI") {
+              
+              console.log(e.target.id.toString() + " was clicked");
+
+              queryStations.where = 'OBJECTID = ' + e.target.id;
+              console.log(queryStations.where)
+              bostonPointLayer.queryFeatures(queryStations).then(
+                function(result) {
+                  // the feature to be highlighted
+                  
+                  var feature = result.features[0];
+                  console.log(feature)
+                  // use the objectID to highlight the feature
+                  highlightSelect = layerView.highlight(feature.attributes["OBJECTID"]);
+                });
+              }
+            });
+      });
       // add Points within the buffer  
       function displayPoints(results) {
           results.features.forEach(myFunction);
-
+          //console.log(results)
           resultsPointLayer.removeAll();
           var features = results.features.map(function (graphic) {
             graphic.symbol = {
@@ -376,36 +409,15 @@ require([
       }
 
       function myFunction(value) {
-        console.log(value)
+        //console.log(value)
         var node = document.createElement("li");
-        node.setAttribute("id", '"' + value.attributes['OBJECTID'] + '"');
+        node.setAttribute("id", value.attributes['OBJECTID']);
         var textnode = document.createTextNode(value.attributes['ZIP_CODE']);
         node.appendChild(textnode);        
         document.getElementById("plist").appendChild(node);
-        pObject.id = value.attributes['OBJECTID'] ;
-        pObject.lat = value.geometry.latitude ;
-        pObject.lon = value.geometry.longitude;
-        f1.push(pObject)
+        
       }
-
-      document.getElementById("plist").addEventListener("click",function(e) {
-        // e.target is our targetted element.
-                    // try doing console.log(e.target.nodeName), it will result LI
-        if(e.target && e.target.nodeName == "LI") {
-            console.log(e.target.id + " was clicked");
-            console.log(f1)
-            //getInfoByID( e.target.id, pObject )
-        }
-      });
-
-      function getInfoByID( id, obj ){
-        //var object = { ... };
-        for(var x in obj.results) {
-          if(obj.results[x].id == id) {
-            return [obj.results[x].loc, obj.results[x].name];
-          }
-        }
-      }  
+  
       /*
       window.onload = function() {
         // setup the button click
