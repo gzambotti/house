@@ -10,7 +10,7 @@
   <meta http-equiv="Content-Security-Policy" content="object-src 'self'">
 
   <title>Building Boston</title>
-
+  <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.2/css/calcite-web.min.css">
   <!-- Calcite Bootstrap -->
   <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-bootstrap.min-v0.2.css">
   <!-- Calcite Maps -->
@@ -46,7 +46,7 @@
     </div>
     <!-- Title -->
     <div class="calcite-title calcite-overflow-hidden">
-      <span class="calcite-title-main">Building Boston</span>
+      <span class="calcite-title-main">FDO --- Harvard College Map</span>
       <span class="calcite-title-divider hidden-xs"></span>
       <span class="calcite-title-sub hidden-xs">TBD....</span>
     </div>
@@ -175,7 +175,20 @@
           </div>
         </div>
         <div id="collapsePoints" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPoints">
-          <div class="panel-body">
+          <div class="panel-body">            
+            <div class="btn-group" role="group">
+              <fieldset class="radio-group">
+                <legend class="radio-group-title">Choose your framework before</legend>
+                <input class="radio-group-input" type="radio" id="react" name="framework" checked/>
+                <label class="radio-group-label" for="react">React</label>
+                <input class="radio-group-input" type="radio" id="ember" name="framework"/>
+                <label class="radio-group-label" for="ember">Ember</label>
+                <input class="radio-group-input" type="radio" id="angular" name="framework"/>
+                <label class="radio-group-label" for="angular">Angular</label>
+                <input class="radio-group-input" type="radio" id="vue" name="framework"/>
+                <label class="radio-group-label" for="vue">Vue</label>
+              </fieldset>
+            </div>
             <ul id="plist"></ul>
           </div>
         </div>
@@ -202,6 +215,7 @@
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
   
+
   <script type="text/javascript" src="static/js/house.js"></script>
  
 </body>

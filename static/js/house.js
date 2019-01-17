@@ -20,7 +20,7 @@ require([
       "esri/geometry/geometryEngine",
       "esri/geometry/SpatialReference",      
       "esri/geometry/Point",
-      "esri/geometry/support/webMercatorUtils",
+      "esri/layers/support/LabelClass",
 
       // Bootstrap
       "bootstrap/Dropdown",
@@ -33,7 +33,7 @@ require([
     ], //function(Map, MapView, FeatureLayer, GraphicsLayer,Graphic, MapImageLayer, TileLayer, SimpleRenderer, SimpleMarkerSymbol, 
       //SimpleFillSymbol, UniqueValueRenderer) {
       function(Map, MapView, Locate, FeatureLayer, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
-      SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Point, webMercatorUtils) { 
+      SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Point, LabelClass) { 
       var nameNeighborList = [];
       var highlightSelect;
       const myzoom = 12, lon = -71.05, lat = 42.32;
@@ -89,8 +89,6 @@ require([
         lon:""
       }};
 
-      var pObject = {id:"", lat:"", lon:""}
-
       Date.prototype.IsoNum = function (n) {
           var tzoffset = this.getTimezoneOffset() * 60000; //offset in milliseconds
           var localISOTime = (new Date(this - tzoffset)).toISOString().slice(0,-1);
@@ -118,9 +116,7 @@ require([
         //console.log('Event fired on #' + e.currentTarget.id);
         $("#panelNeighborhood").attr('class', 'panel collapse in');
       })
-      // graphic point to hold all the points within a buffer 
-      var resultsPointLayer = new GraphicsLayer();
-      var resultsPointLayer2 = new GraphicsLayer();
+      
       // graphic polygons to hold the neighborhood selection and symbol
       var neighborhoodPoly = new GraphicsLayer();
       // style to display polygon zipcode
@@ -151,7 +147,7 @@ require([
         }
       };
 
-      // Create a symbol for drawing the point
+      // Create a symbol for drawing the point when list is selected
       var markerSymbol = {
         type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
         color: [0, 0, 250],
@@ -160,6 +156,21 @@ require([
           width: 2
         }
       };
+
+      var markerSymbol1 = {
+        type: "simple", // autocasts as new SimpleRenderer()
+        symbol: {
+          type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+          style: "circle",
+          size: 18,
+          color: [255, 255, 255, 1],
+          outline: {
+            width: 1,
+            color: "#FF0055",
+            style: "solid"
+          }
+        }
+      };   
 
       var bostonBoundaryRenderer = new SimpleRenderer({
         symbol: new SimpleLineSymbol({
@@ -207,7 +218,7 @@ require([
       // create a map
       var map = new Map({
         basemap: "gray",
-        layers: [bostonBoundaryLayer, resultsPointLayer, bostonPointLayer]
+        layers: [bostonBoundaryLayer, bostonPointLayer]
 
       });
       // create a MapView
@@ -287,8 +298,7 @@ require([
             console.log(JSON.stringify(neighbor));
           });
           // to do select zipcode by event mapPoint          
-          createBuffer(event.mapPoint.longitude, event.mapPoint.latitude).then(displayPoints); 
-          
+          createBuffer(event.mapPoint.longitude, event.mapPoint.latitude).then(displayPoints);           
         }
       }
 
@@ -368,8 +378,7 @@ require([
           // try doing console.log(e.target.nodeName), it will result LI
           if(e.target && e.target.nodeName == "LI") {              
               console.log(e.target.id.toString() + " was clicked");
-              query.where = 'OBJECTID = ' + e.target.id;
-              console.log(resultsPointLayer);
+              query.where = 'OBJECTID = ' + e.target.id;              
               bostonPointLayer.queryFeatures(query).then(function(result) {
                   
                 var point = {
@@ -417,33 +426,52 @@ require([
 
       // add Points within the buffer  
       function displayPoints(results) {
-          results.features.forEach(myFunction);
-          //console.log(results)
-          resultsPointLayer.removeAll();
-          var features = results.features.map(function (graphic) {
-            graphic.symbol = {
-              type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-              style: "circle",
-              size: 6.5,
-              color: "red",
-              outline: {  // autocasts as new SimpleLineSymbol()
-                width: 0.5,
-                color: "white"
-              }
-            };
-            return graphic;
+          
+          console.log(results.features)
+          const layer = new FeatureLayer({
+             // create an instance of esri/layers/support/Field for each field object
+             fields: [             
+             {
+               name: "OBJECTID",
+               alias: "OBJECTID",
+               type: "oid"
+             }
+             ],
+             objectIdField: "OBJECTID",
+             geometryType: "point",
+             spatialReference: { wkid: 4326 },
+             outFields: ["OBJECTID"],
+             source: results.features,  //  an array of graphics with geometry and attributes
+                               // popupTemplate and symbol are not required in each feature
+                               // since those are handled with the popupTemplate and
+                               // renderer properties of the layer             
+             renderer: markerSymbol1  // UniqueValueRenderer based on `type` attribute
           });
-          resultsPointLayer.addMany(features);
+         
+          const pointLabelClass = new LabelClass({
+            labelExpressionInfo: { expression: "$feature.OBJECTID" },
+            symbol: {
+              type: "text",  // autocasts as new TextSymbol()
+              color: "black",
+              size: 10,
+              haloSize: 10,
+              haloColor: "white"
+            }
+          });
+          pointLabelClass.labelPlacement = "center-center";
+          layer.labelingInfo = [ pointLabelClass ];
+          map.add(layer);
+          results.features.forEach(myFunction);  
+
       }
 
       function myFunction(value) {
-        //console.log(value)
+        //console.log(value.attributes)
         var node = document.createElement("li");
         node.setAttribute("id", value.attributes['OBJECTID']);
-        var textnode = document.createTextNode(value.attributes['ZIP_CODE']);
+        var textnode = document.createTextNode(value.attributes['OBJECTID']);
         node.appendChild(textnode);        
-        document.getElementById("plist").appendChild(node);
-        
+        document.getElementById("plist").appendChild(node);        
       }
       
       
