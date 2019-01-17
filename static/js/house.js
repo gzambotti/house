@@ -151,16 +151,14 @@ require([
         }
       };
 
-      var pSymbol = {
-        symbol: {
-      type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-      color: "yellow",
-      size: 14,
-      outline: { // autocasts as new SimpleLineSymbol()
-        width: 3.5,
-        color: "darkblue"
-      }
-    }
+      // Create a symbol for drawing the point
+      var markerSymbol = {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        color: [0, 0, 250],
+        outline: { // autocasts as new SimpleLineSymbol()
+          color: [255, 255, 0],
+          width: 2
+        }
       };
 
       var bostonBoundaryRenderer = new SimpleRenderer({
@@ -282,8 +280,8 @@ require([
             //console.log(result.features[0].geometry.extent);
             view.goTo(response.features[0].geometry.extent);
             var graphicC = new Graphic(response.features[0].geometry, neighborhoodPolySymbolSelect);
-            neighborhoodPoly.add(graphicC);
-            view.graphics.add(graphicC);
+            //neighborhoodPoly.add(graphicC);
+            //view.graphics.add(graphicC);
             document.getElementById('zipcodetext').value = response.features[0].attributes.ZIP_CODE;
             neighbor.attributes.zipcode = response.features[0].attributes.ZIP_CODE;
             console.log(JSON.stringify(neighbor));
@@ -361,31 +359,34 @@ require([
         $("#panelPoints").attr('class', 'panel collapse in');
       })
 
+      
       view.whenLayerView(bostonPointLayer).then(function(layerView) {
         console.log('ready!!!!!');
         var query = bostonPointLayer.createQuery();
-        query.returnGeometry = true;
         document.getElementById("plist").addEventListener("click",function(e) {
           // e.target is our targetted element.
           // try doing console.log(e.target.nodeName), it will result LI
           if(e.target && e.target.nodeName == "LI") {              
               console.log(e.target.id.toString() + " was clicked");
               query.where = 'OBJECTID = ' + e.target.id;
-              
+              console.log(resultsPointLayer);
               bostonPointLayer.queryFeatures(query).then(function(result) {
-                  console.log(result.features[0].geometry)
-                  // the feature to be highlighted
-                  var graphicC = new Graphic(result.features[0].geometry, pSymbol);
-                  resultsPointLayer2.add(graphicC);
-                  console.log(graphicC)
-                  view.graphics.add(graphicC);
                   
-                  // use the objectID to highlight the feature
-                  //highlightSelect = layerView.highlight(feature.attributes["OBJECTID"]);
-                  
+                var point = {
+                  type: "point", // autocasts as new Point()
+                  longitude: result.features[0].geometry.longitude,
+                  latitude: result.features[0].geometry.latitude
+                };
+                // Create a graphic and add the geometry and symbol to it
+                var pointGraphic = new Graphic({
+                  geometry: point,
+                  symbol: markerSymbol
                 });
-              }
-            });
+                view.graphics.add(pointGraphic);
+                  
+              });
+            }
+        });
       });
        
 
@@ -409,17 +410,11 @@ require([
         var query = bostonPointLayer.createQuery();
 
         query.geometry = pBuffer;  // obtained from a view click event
-        query.spatialRelationship = "intersects";        
-        /*bostonPointLayer.queryFeatures(query).then(function(result){
-          console.log(result);          
-        });*/
-        //bostonPointLayer.queryFeatures(query); 
+        query.spatialRelationship = "intersects";
         
         return bostonPointLayer.queryFeatures(query);         
       }
 
-
-      
       // add Points within the buffer  
       function displayPoints(results) {
           results.features.forEach(myFunction);
