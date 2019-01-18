@@ -109,8 +109,8 @@
         </div>
         <div id="collapseNeighborhood" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNeighborhood">
           <div class="panel-body">
-            <p>Step 1: Clicks on which neighborhood(s) you would like new housing to be built.</p>
-            <p id="housecounter">House Counter: 4</p>
+            <p>Clicks on the map neighborhood(s) you would like new housing to be built. Click "Remove Selected" to remove all your selection. Click "Submit" to submit all your selection.</p>
+            <p id="housecounter">Neighborhood Counter: 4</p>
             <button id="removepoly" type="button" class="btn btn-default">Remove Selected neighborhood(s)</button>
             <button id="submitpoly" type="button" class="btn btn-default">Submit neighborhood(s)</button>
           </div>
@@ -178,15 +178,15 @@
           <div class="panel-body">            
             <div class="btn-group" role="group">
               <fieldset class="radio-group">
-                <legend class="radio-group-title">Choose your framework before</legend>
-                <input class="radio-group-input" type="radio" id="react" name="framework" checked/>
-                <label class="radio-group-label" for="react">React</label>
-                <input class="radio-group-input" type="radio" id="ember" name="framework"/>
-                <label class="radio-group-label" for="ember">Ember</label>
-                <input class="radio-group-input" type="radio" id="angular" name="framework"/>
-                <label class="radio-group-label" for="angular">Angular</label>
-                <input class="radio-group-input" type="radio" id="vue" name="framework"/>
-                <label class="radio-group-label" for="vue">Vue</label>
+                <legend class="radio-group-title">Do you support replacing the current building with the proposed building?</legend>
+                <input class="radio-group-input" type="radio" id="so" name="framework" checked/>
+                <label class="radio-group-label" for="react">Strongly Oppose</label>
+                <input class="radio-group-input" type="radio" id="op" name="framework"/>
+                <label class="radio-group-label" for="ember">Oppose</label>
+                <input class="radio-group-input" type="radio" id="wo" name="framework"/>
+                <label class="radio-group-label" for="angular">Somewhat Oppose</label>
+                <input class="radio-group-input" type="radio" id="nt" name="framework"/>
+                <label class="radio-group-label" for="vue">Neutral</label>
               </fieldset>
             </div>
             <ul id="plist"></ul>
