@@ -155,12 +155,22 @@ require([
       // Create a symbol for drawing the point when list is selected
       var markerSymbol = {
         type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+<<<<<<< HEAD
         color: [0, 0, 250],
         size: 28,
         outline: { // autocasts as new SimpleLineSymbol()
           color: [255, 255, 0],
           width: 3
+=======
+        color: [0, 0, 255],
+        size: "26px",
+        outline: { // autocasts as new SimpleLineSymbol()
+          color: [255, 255, 0],
+          width: 4
+>>>>>>> fix bugs
         }
+        
+
       };
 
       var markerSymbolPoints = {
@@ -234,11 +244,7 @@ require([
         center: [lon, lat], /*-71.11607611178287, 42.37410778220068*/
         zoom: myzoom,        
         padding: {top: 50, bottom: 0}, 
-        breakpoints: {xsmall: 768, small: 769, medium: 992, large: 1200},
-        highlightOptions: {
-          color: [255, 255, 0],
-          fillOpacity: 0.4
-        }       
+        breakpoints: {xsmall: 768, small: 769, medium: 992, large: 1200}       
       });
       
       // Disables map rotation
@@ -354,8 +360,8 @@ require([
         query.where = "ZIP_CODE = '" + $(this).val() + "'";
         neighbor.attributes.zipcode = $(this).val();
         bostonBoundaryLayer.queryFeatures(query).then(function(result){
-          console.log(result.features[0].geometry.extent);
-          console.log(JSON.stringify(neighbor));
+          //console.log(result.features[0].geometry.extent);
+          //console.log(JSON.stringify(neighbor));
           view.goTo(result.features[0].geometry.extent);
           var graphicC = new Graphic(result.features[0].geometry, neighborhoodPolySymbolSelect);
           neighborhoodPoly.add(graphicC);
@@ -417,7 +423,11 @@ require([
             style: "none"
           }
         });
+<<<<<<< HEAD
         view.goTo(pBuffer.extent)
+=======
+        
+>>>>>>> fix bugs
         //view.graphics.removeAll();
         view.graphics.add(bGraphic);
         var query = bostonPointLayer.createQuery();
@@ -458,10 +468,14 @@ require([
             symbol: {
               type: "text",  // autocasts as new TextSymbol()
               color: "black",
+<<<<<<< HEAD
               font: {
                 size: 10,
                 weight: "bold"
               },
+=======
+              size: 8,
+>>>>>>> fix bugs
               haloSize: 10,
               haloColor: "white"
             }
