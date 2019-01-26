@@ -17,16 +17,16 @@
   <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-arcgis-4.x.min-v0.2.css">
   <!-- ArcGIS JS 4 -->
   <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css"> 
+  <!-- Calcite JS -->
   <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.3/css/calcite-web.min.css">
      
   <!-- Custome JS 4 -->
-  <link rel="stylesheet" src="static/css/house.css"></script>  
+  <link rel="stylesheet" href="static/css/house.css"></script>  
 </head>
 
 <body class="calcite-maps calcite-nav-top">
 
   <!-- Navbar -->
-
   <nav class="navbar calcite-navbar navbar-fixed-top calcite-text-dark calcite-bg-dark" style="background-color: rgb(196, 221, 250);">
     <!-- Menu -->
     <div class="dropdown calcite-dropdown calcite-text-dark calcite-bg-light" role="presentation">
@@ -131,15 +131,7 @@
         </div>
         <div id="collapseNeighborhood" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNeighborhood">
           <div class="panel-body">
-<<<<<<< HEAD
-<<<<<<< HEAD
             <p>Click on the map neighborhood(s) where you would like new housing to be built. Click "Remove Selected" to remove all your selection. Click "Submit" to submit all your selection.</p>
-=======
-            <p>Clicks on the map neighborhood(s) you would like new housing to be built. Click "Remove Selected" to remove all your selection. Click "Submit" to submit all your selection.</p>
->>>>>>> fix bugs
-=======
-            <p>Clicks on the map neighborhood(s) you would like new housing to be built. Click "Remove Selected" to remove all your selection. Click "Submit" to submit all your selection.</p>
->>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
             <p id="housecounter">Neighborhood Counter: 4</p>
             <button id="removepoly" type="button" class="btn btn-default">Remove Selected neighborhood(s)</button>
             <button id="submitpoly" type="button" class="btn btn-default" disabled="disabled">Submit neighborhood(s)</button>
@@ -205,14 +197,9 @@
           </div>
         </div>
         <div id="collapsePoints" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPoints">
-          <div class="panel-body">            
+          <div class="panel-body">
+          <img src="static/css/house.png" alt="house" width="400">            
             <div class="btn-group" role="group">
-              <fieldset class="fieldset-radio">
-                <label><input type="radio" name="color" value="so">Strongly Oppose</label>
-                <label><input type="radio" name="color" value="op">Oppose</label>
-                <label><input type="radio" name="color" value="wo">Somewhat Oppose</label>
-              </fieldset>
-              <!--  
               <fieldset class="radio-group">
                 <legend class="radio-group-title">Do you support replacing the current building with the proposed building?</legend>
                 <input class="radio-group-input" type="radio" id="so" name="framework" checked/>
@@ -224,9 +211,9 @@
                 <input class="radio-group-input" type="radio" id="nt" name="framework"/>
                 <label class="radio-group-label" for="vue">Neutral</label>
               </fieldset>
-              -->
+              
             </div>
-            <ul id="plist"></ul>
+            <ul id="plist" class="ulplist"></ul>
           </div>
         </div>
       </div>
@@ -235,7 +222,6 @@
   
   <script type="text/javascript" src="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.2/js/calcite-web.min.js"></script>
 
-  
   <!-- /.calcite-panels -->
   <script type="text/javascript">
     var dojoConfig = {
@@ -249,16 +235,12 @@
       }]
     };
   </script>
-
-  <!-- ArcGIS JS 4 -->
+  
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
-  
+  <!-- ArcGIS JS 4 -->
   <script src="https://js.arcgis.com/4.10/"></script>
-  
-  
-  
   <script type="text/javascript" src="static/js/house.js"></script>
  
 </body>

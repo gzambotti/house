@@ -36,7 +36,6 @@ require([
       function(Map, MapView, Locate, FeatureLayer, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
       SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Point, LabelClass) { 
       
-        
       calcite.init()  
 
       var nameNeighborList = [];
@@ -155,28 +154,12 @@ require([
       // Create a symbol for drawing the point when list is selected
       var markerSymbol = {
         type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-<<<<<<< HEAD
-<<<<<<< HEAD
-        color: [0, 0, 250],
-        size: 28,
-        outline: { // autocasts as new SimpleLineSymbol()
-          color: [255, 255, 0],
-          width: 3
-=======
-=======
->>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
-        color: [0, 0, 255],
-        size: "26px",
+        color: [0, 0, 250, .8],
+        size: "40px",
         outline: { // autocasts as new SimpleLineSymbol()
           color: [255, 255, 0],
           width: 4
-<<<<<<< HEAD
->>>>>>> fix bugs
-=======
->>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
         }
-        
-
       };
 
       var markerSymbolPoints = {
@@ -408,7 +391,11 @@ require([
                   geometry: point,
                   symbol: markerSymbol
                 });
-                view.graphics.add(pointGraphic);    
+                view.graphics.add(pointGraphic);
+
+                var v = document.getElementById(e.target.id)
+                v.style.backgroundColor = "yellow";
+                
               });
             }
         });
@@ -429,15 +416,7 @@ require([
             style: "none"
           }
         });
-<<<<<<< HEAD
-<<<<<<< HEAD
         view.goTo(pBuffer.extent)
-=======
-        
->>>>>>> fix bugs
-=======
-        
->>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
         //view.graphics.removeAll();
         view.graphics.add(bGraphic);
         var query = bostonPointLayer.createQuery();
@@ -478,18 +457,11 @@ require([
             symbol: {
               type: "text",  // autocasts as new TextSymbol()
               color: "black",
-<<<<<<< HEAD
-<<<<<<< HEAD
               font: {
                 size: 10,
                 weight: "bold"
               },
-=======
               size: 8,
->>>>>>> fix bugs
-=======
-              size: 8,
->>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
               haloSize: 10,
               haloColor: "white"
             }
@@ -506,6 +478,10 @@ require([
         //console.log(value.attributes)
         var node = document.createElement("li");
         node.setAttribute("id", value.attributes['OBJECTID']);
+        node.classList.add("pslist");
+        //var a = document.createElement('a');
+        //node.setAttribute('href', "#");
+        //node.appendChild(a);
         var textnode = document.createTextNode(value.attributes['OBJECTID']);
         node.appendChild(textnode);        
         document.getElementById("plist").appendChild(node);        
