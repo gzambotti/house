@@ -26,13 +26,7 @@ html,body {
 }
 
 img{
-  padding-top:10px;
-}
-
-ul{
-  margin:0;
-  list-style-position: inside;
-    padding-left:0;
+  padding-top:0px;
 }
 
 .esri-popup__content {
@@ -52,3 +46,30 @@ ul{
     margin: 0 0 1.2em;
     margin-top: 10px;
 }
+
+.ulplist {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000;
+}
+
+li:focus {
+    background-color: #ff0000;
+}
+
+.pslist {
+    margin-top: .25em;
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 6px;
+    text-decoration: none;
+    text-decoration-line: none;
+    text-decoration-style: initial;
+    text-decoration-color: initial;
+    cursor: pointer;
+}
+
