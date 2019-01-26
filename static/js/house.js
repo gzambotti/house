@@ -156,18 +156,24 @@ require([
       var markerSymbol = {
         type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
 <<<<<<< HEAD
+<<<<<<< HEAD
         color: [0, 0, 250],
         size: 28,
         outline: { // autocasts as new SimpleLineSymbol()
           color: [255, 255, 0],
           width: 3
 =======
+=======
+>>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
         color: [0, 0, 255],
         size: "26px",
         outline: { // autocasts as new SimpleLineSymbol()
           color: [255, 255, 0],
           width: 4
+<<<<<<< HEAD
 >>>>>>> fix bugs
+=======
+>>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
         }
         
 
@@ -424,10 +430,14 @@ require([
           }
         });
 <<<<<<< HEAD
+<<<<<<< HEAD
         view.goTo(pBuffer.extent)
 =======
         
 >>>>>>> fix bugs
+=======
+        
+>>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
         //view.graphics.removeAll();
         view.graphics.add(bGraphic);
         var query = bostonPointLayer.createQuery();
@@ -469,6 +479,7 @@ require([
               type: "text",  // autocasts as new TextSymbol()
               color: "black",
 <<<<<<< HEAD
+<<<<<<< HEAD
               font: {
                 size: 10,
                 weight: "bold"
@@ -476,6 +487,9 @@ require([
 =======
               size: 8,
 >>>>>>> fix bugs
+=======
+              size: 8,
+>>>>>>> 9f9753f7a98412be17d059e4db5565d679fed7b7
               haloSize: 10,
               haloColor: "white"
             }
