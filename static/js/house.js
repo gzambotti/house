@@ -24,7 +24,8 @@ require([
 
       // Bootstrap
       "bootstrap/Dropdown",
-      "bootstrap/Collapse",      
+      "bootstrap/Collapse",
+      "bootstrap/Modal",      
 
       // Calcite Maps
       "calcite-maps/calcitemaps-v0.3",
@@ -34,18 +35,22 @@ require([
       //SimpleFillSymbol, UniqueValueRenderer) {
       function(Map, MapView, Locate, FeatureLayer, GraphicsLayer, Graphic, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
       SimpleFillSymbol, UniqueValueRenderer, Color, Extent, Popup, geometryEngine, SpatialReference, Point, LabelClass) { 
+      
+        
+      calcite.init()  
+
       var nameNeighborList = [];
       var highlightSelect;
+      let layerPoints;
       const myzoom = 12, lon = -71.05, lat = 42.32;
 
       const xMax = -7915458.81211143;
       const xMin = -7917751.9229597915;
       const yMax = 5217414.497463334;
       const yMin = 5216847.191394078;  
-      // x keep the House Counter
+      // x keep the Neighborhood Counter
       var x = 4;
       var y = 0;
-      //var circle;    
 
       const isMobile = {
           Android: function() {
@@ -112,7 +117,7 @@ require([
       var userhash = hash(10);
       console.log(userhash)
       // function to collapse the panelZipcode
-      $('#panelInfo').on('click', function (e) {
+      $('#start').on('click', function (e) {
         //console.log('Event fired on #' + e.currentTarget.id);
         $("#panelNeighborhood").attr('class', 'panel collapse in');
       })
@@ -151,18 +156,19 @@ require([
       var markerSymbol = {
         type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
         color: [0, 0, 250],
+        size: 28,
         outline: { // autocasts as new SimpleLineSymbol()
           color: [255, 255, 0],
-          width: 2
+          width: 3
         }
       };
 
-      var markerSymbol1 = {
+      var markerSymbolPoints = {
         type: "simple", // autocasts as new SimpleRenderer()
         symbol: {
           type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
           style: "circle",
-          size: 18,
+          size: 28,
           color: [255, 255, 255, 1],
           outline: {
             width: 1,
@@ -236,7 +242,8 @@ require([
       });
       
       // Disables map rotation
-      view.constraints = {rotationEnabled: false};      
+      view.constraints = {rotationEnabled: false};
+           
       // enble view click
       view.on("click", retriveNeighborhoodSelection);
 
@@ -250,7 +257,7 @@ require([
           //console.log(event.mapPoint);
           //console.log(document.getElementById("housecounter").innerHTML.split(": "))
         
-          document.getElementById("housecounter").innerHTML = "House Counter: " + x.toString();
+          document.getElementById("housecounter").innerHTML = "Neighborhood Counter: " + x.toString();
 
           //view.whenLayerView(bostonBoundaryLayer).then(function(layerView){
           var query = bostonBoundaryLayer.createQuery();
@@ -265,7 +272,10 @@ require([
             view.graphics.add(graphicC);
             nameNeighborList.push(result.features[0].attributes.NAME);
           });            
-          //});           
+          if(x == 0){
+            var s = document.getElementById('submitpoly')
+            s.removeAttribute('disabled');
+          }          
         }
         
         else if (y == 2){
@@ -289,7 +299,7 @@ require([
           bostonBoundaryLayer.queryFeatures(query).then(function(response){
             //console.log(response)
             //console.log(result.features[0].geometry.extent);
-            view.goTo(response.features[0].geometry.extent);
+            //view.goTo(response.features[0].geometry.extent);
             var graphicC = new Graphic(response.features[0].geometry, neighborhoodPolySymbolSelect);
             //neighborhoodPoly.add(graphicC);
             //view.graphics.add(graphicC);
@@ -307,13 +317,14 @@ require([
         console.log('Event fired on #' + e.currentTarget.id);
         view.graphics.removeAll();
         x = 4;
-        document.getElementById("housecounter").innerHTML = "House Counter: " + x.toString();
+        document.getElementById("housecounter").innerHTML = "Neighborhood Counter: " + x.toString();
         nameNeighborList = [];
-        //$("#panelZipcode").attr('class', 'panel collapse in');
+        // disable the submit button
+        var s = document.getElementById('submitpoly')
+        s.setAttribute('disabled', 'disabled')
       })
 
       // submit the zipcode
-      
       $('#submitpoly').on('click', function (e) {
         console.log( "submitpoly....");        
         for (x in nameNeighborList) {
@@ -324,16 +335,15 @@ require([
           if(x == 3){neighbor.attributes.n3 = nameNeighborList[x]}
         }
         neighbor.attributes.sessionID = userhash;
-        console.log(neighbor);
+        //console.log(neighbor);
         view.graphics.removeAll();
         x = -1;
         y = 2;
         $("#panelNeighborhood").attr('class', 'panel collapse out');
         $("#panelZipcode").attr('class', 'panel collapse in');
+        // remove the zipcode boundary layer
         map.remove(bostonBoundaryLayer);
       }) 
-
-      
 
       $('#zipcodetext').on('change', function (e) {
         //console.log('Event fired on #' + e.currentTarget.id, e);
@@ -356,10 +366,7 @@ require([
       // push data to AGOL on button click
       $('#zipcodeid').on('click', function (e) {
         console.log(JSON.stringify(neighbor));
-
-        /*$.post("receiver", JSON.stringify(neighbor), function(){
-    
-        });*/
+        /*$.post("receiver", JSON.stringify(neighbor), function(){});*/
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
         xmlhttp.open("POST", "/receiver");
         xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -369,7 +376,6 @@ require([
         $("#panelPoints").attr('class', 'panel collapse in');
       })
 
-      
       view.whenLayerView(bostonPointLayer).then(function(layerView) {
         console.log('ready!!!!!');
         var query = bostonPointLayer.createQuery();
@@ -380,7 +386,6 @@ require([
               console.log(e.target.id.toString() + " was clicked");
               query.where = 'OBJECTID = ' + e.target.id;              
               bostonPointLayer.queryFeatures(query).then(function(result) {
-                  
                 var point = {
                   type: "point", // autocasts as new Point()
                   longitude: result.features[0].geometry.longitude,
@@ -391,14 +396,12 @@ require([
                   geometry: point,
                   symbol: markerSymbol
                 });
-                view.graphics.add(pointGraphic);
-                  
+                view.graphics.add(pointGraphic);    
               });
             }
         });
       });
        
-
       // create a 0.75 miles buffer on map click
       function createBuffer(x,y){        
         var point = new Point(x, y, {"spatialReference":{"wkid":4326 }});    
@@ -414,6 +417,7 @@ require([
             style: "none"
           }
         });
+        view.goTo(pBuffer.extent)
         //view.graphics.removeAll();
         view.graphics.add(bGraphic);
         var query = bostonPointLayer.createQuery();
@@ -426,9 +430,13 @@ require([
 
       // add Points within the buffer  
       function displayPoints(results) {
+          // check if the layer already exist
+          if (layerPoints != 'undefined'){
+            map.remove(layerPoints);
+            document.getElementById("plist").innerHTML = "";
+          }
           
-          console.log(results.features)
-          const layer = new FeatureLayer({
+          layerPoints = new FeatureLayer({
              // create an instance of esri/layers/support/Field for each field object
              fields: [             
              {
@@ -441,11 +449,8 @@ require([
              geometryType: "point",
              spatialReference: { wkid: 4326 },
              outFields: ["OBJECTID"],
-             source: results.features,  //  an array of graphics with geometry and attributes
-                               // popupTemplate and symbol are not required in each feature
-                               // since those are handled with the popupTemplate and
-                               // renderer properties of the layer             
-             renderer: markerSymbol1  // UniqueValueRenderer based on `type` attribute
+             source: results.features,             
+             renderer: markerSymbolPoints
           });
          
           const pointLabelClass = new LabelClass({
@@ -453,14 +458,18 @@ require([
             symbol: {
               type: "text",  // autocasts as new TextSymbol()
               color: "black",
-              size: 10,
+              font: {
+                size: 10,
+                weight: "bold"
+              },
               haloSize: 10,
               haloColor: "white"
             }
           });
           pointLabelClass.labelPlacement = "center-center";
-          layer.labelingInfo = [ pointLabelClass ];
-          map.add(layer);
+          layerPoints.labelingInfo = [ pointLabelClass ];
+          map.add(layerPoints);
+          
           results.features.forEach(myFunction);  
 
       }

@@ -16,7 +16,9 @@
   <!-- Calcite Maps -->
   <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-arcgis-4.x.min-v0.2.css">
   <!-- ArcGIS JS 4 -->
-  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">  
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css"> 
+  <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.3/css/calcite-web.min.css">
+     
   <!-- Custome JS 4 -->
   <link rel="stylesheet" src="static/css/house.css"></script>  
 </head>
@@ -38,7 +40,9 @@
         </div>
       </a>
       <ul class="dropdown-menu">
+        <!--
         <li><a role="button" data-target="#panelInfo" aria-haspopup="false"><span class="glyphicon glyphicon-info-sign"></span> Info</a></li>
+        -->
         <li><a role="button" data-target="#panelNeighborhood" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Neighborhood Info</a></li> 
         <li><a role="button" data-target="#panelZipcode" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Zipcode Info</a></li>          
         <li><a role="button" id="calciteToggleNavbar" aria-haspopup="true"><span class="glyphicon glyphicon-fullscreen"></span> Full Map</a></li>
@@ -46,7 +50,7 @@
     </div>
     <!-- Title -->
     <div class="calcite-title calcite-overflow-hidden">
-      <span class="calcite-title-main">FDO --- Harvard College Map</span>
+      <span class="calcite-title-main">Boston Housing</span>
       <span class="calcite-title-divider hidden-xs"></span>
       <span class="calcite-title-sub hidden-xs">TBD....</span>
     </div>
@@ -60,22 +64,37 @@
     </ul>
   </nav>
   <!--/.calcite-navbar -->
-
   <!-- Map  -->
-
   <div class="calcite-map calcite-map-absolute">
     <div id="mapViewDiv">
-      <div id="alert_placeholder">        
-      </div>
+      <div id="alert_placeholder"></div>
     </div>
   </div>
   <!-- /.calcite-map -->
+
+  <!-- Modal -->
+  <div class="js-modal modal-overlay modifier-class is-active" data-modal="foo">
+  <div class="modal-content column-12" role="dialog" aria-labelledby="modal" role="dialog">
+
+    <a class="js-modal-toggle right" href="#" aria-label="close-modal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 32 32" class="svg-icon"><path d="M18.404 16l9.9 9.9-2.404 2.404-9.9-9.9-9.9 9.9L3.696 25.9l9.9-9.9-9.9-9.898L6.1 3.698l9.9 9.899 9.9-9.9 2.404 2.406-9.9 9.898z"/></svg>
+    </a>
+    <p>
+      INTRO About the Project TO DO!!!
+      Click Start to begin.
+    </p>
+    <div class="text-right">
+        <button id="start" class="btn js-modal-toggle">Start</button>
+    </div>
+  </div>
+  </div>
 
   <!-- Panels -->
 
   <div class="calcite-panels calcite-panels-right calcite-text-dark calcite-bg-dark panel-group" style="background-color: rgb(196, 221, 250);">
 
       <!-- Info Panel -->
+      <!--
       <div id="panelInfo" class="panel collapse in">
         <div id="headingInfo" class="panel-heading" role="tab">
           <div class="panel-title" style="background-color: rgb(196, 221, 250);">
@@ -88,17 +107,20 @@
         </div>
         <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
           <div class="panel-body">
+            
             As more people move to Boston, the City needs to decide where new homes and apartments
             should be built. In this activity, you will decide where 600 units of market rate housing should be built in Boston.
             You will be given 5 buildings, each containing 120 units of housing, to place within Boston. To
             place a building, click on the building’s button, then clicking on the location where you would like  
             that building to go. To start click the "x" button on the top right.
-            <!--<img src="css/images/house.gif" alt="house" height="200" width="300">        -->
+            <img src="css/images/house.gif" alt="house" height="200" width="300">        
             <video width="300" height="200" autoplay controls><source src="http://maps.cga.harvard.edu/housing/css/images/movie.m4v" type="video/mp4"></video>
+            
+            
           </div>
         </div>
       </div>
-    
+      -->
       <!-- Neighborhood Panel -->          
       <div id="panelNeighborhood" class="panel collapse">
         <div id="headingNeighborhood" class="panel-heading" role="tab">
@@ -112,7 +134,7 @@
             <p>Click on the map neighborhood(s) where you would like new housing to be built. Click "Remove Selected" to remove all your selection. Click "Submit" to submit all your selection.</p>
             <p id="housecounter">Neighborhood Counter: 4</p>
             <button id="removepoly" type="button" class="btn btn-default">Remove Selected neighborhood(s)</button>
-            <button id="submitpoly" type="button" class="btn btn-default">Submit neighborhood(s)</button>
+            <button id="submitpoly" type="button" class="btn btn-default" disabled="disabled">Submit neighborhood(s)</button>
           </div>
         </div>
       </div>
@@ -177,6 +199,12 @@
         <div id="collapsePoints" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPoints">
           <div class="panel-body">            
             <div class="btn-group" role="group">
+              <fieldset class="fieldset-radio">
+                <label><input type="radio" name="color" value="so">Strongly Oppose</label>
+                <label><input type="radio" name="color" value="op">Oppose</label>
+                <label><input type="radio" name="color" value="wo">Somewhat Oppose</label>
+              </fieldset>
+              <!--  
               <fieldset class="radio-group">
                 <legend class="radio-group-title">Do you support replacing the current building with the proposed building?</legend>
                 <input class="radio-group-input" type="radio" id="so" name="framework" checked/>
@@ -188,6 +216,7 @@
                 <input class="radio-group-input" type="radio" id="nt" name="framework"/>
                 <label class="radio-group-label" for="vue">Neutral</label>
               </fieldset>
+              -->
             </div>
             <ul id="plist"></ul>
           </div>
@@ -195,6 +224,10 @@
       </div>
 
   </div>
+  
+  <script type="text/javascript" src="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.2/js/calcite-web.min.js"></script>
+
+  
   <!-- /.calcite-panels -->
   <script type="text/javascript">
     var dojoConfig = {
@@ -209,13 +242,15 @@
     };
   </script>
 
-  <!-- ArcGIS JS 4 -->  
-  <script src="https://js.arcgis.com/4.10/"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+  <!-- ArcGIS JS 4 -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
   
-
+  <script src="https://js.arcgis.com/4.10/"></script>
+  
+  
+  
   <script type="text/javascript" src="static/js/house.js"></script>
  
 </body>
