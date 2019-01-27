@@ -8,7 +8,11 @@ html,body {
 }
 
 .esri-view-height-xsmall .esri-ui-corner .esri-legend {
-    max-height: 440px;
+    max-height: 640px;
+}
+
+#collapsePoints{
+    height: 640px;
 }
 
 #alert_placeholder{
@@ -29,23 +33,6 @@ img{
   padding-top:0px;
 }
 
-.esri-popup__content {
-    display: flex;
-    flex-flow: column nowrap;
-    margin: 15px;
-    flex: 1 1 auto;
-    font-size: 14px;
-    font-weight: 400; 
-    overflow: auto;
-    overflow-x: hidden;
-}
-
-.esri-popup__content p {
-    font-size: 14px;
-    line-height: 1.3em;
-    margin: 0 0 1.2em;
-    margin-top: 10px;
-}
 
 .ulplist {
   list-style-type: none;
