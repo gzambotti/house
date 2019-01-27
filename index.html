@@ -189,7 +189,7 @@
       </div>
 
       <!-- Points Panel -->          
-      <div id="panelPoints" class="panel collapse">
+      <div id="panelPoints" class="panel collapse" style="height: 510px;">
         <div id="headingPoints" class="panel-heading" role="tab">
           <div class="panel-title" style="background-color: rgb(196, 221, 250);">
             <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseZipcode" data-parent="#panelAccordion" aria-expanded="true" aria-controls="collapseZipcode"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Points Info</a>
@@ -197,27 +197,21 @@
           </div>
         </div>
         <div id="collapsePoints" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPoints">
-          <div id="g1" class="panel-body">
+          <div>
             <img src="static/css/house.png" alt="house" width="400">            
-            <fieldset class="radio-group font-size--3">
-                <legend class="radio-group-title">Do you support replacing the current building with the proposed building?</legend>
-                <input class="radio-group-input" type="radio" id="so" name="framework" checked/>
-                <label class="radio-group-label" for="so">Strongly Oppose</label>
-                <input class="radio-group-input" type="radio" id="op" name="framework"/>
-                <label class="radio-group-label" for="op">Oppose</label>
-                <input class="radio-group-input" type="radio" id="swo" name="framework"/>
-                <label class="radio-group-label" for="swo">Somewhat Oppose</label>
-                <input class="radio-group-input" type="radio" id="nt" name="framework"/>
-                <label class="radio-group-label" for="nt">Neutral</label>
+            <fieldset id="g1" class="radio-group font-size--3">
+                <legend class="radio-group-title font-size--3">Do you support replacing the current building with the proposed building?</legend>
+                <input class="radio-group-input" type="radio" id="v1" name="framework"/>
+                <label class="radio-group-label" for="v1">Oppose</label>
+                <input class="radio-group-input" type="radio" id="v2" name="framework"/>
+                <label class="radio-group-label" for="v2">Neutral</label>
+                <input class="radio-group-input" type="radio" id="v3" name="framework"/>
+                <label class="radio-group-label" for="v3">Support</label>
               </fieldset>
-              
-              
-            
             <ul id="plist" class="ulplist"></ul>
           </div>
         </div>
       </div>
-
   </div>
   
   <script type="text/javascript" src="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.2/js/calcite-web.min.js"></script>
@@ -242,6 +236,5 @@
   <!-- ArcGIS JS 4 -->
   <script src="https://js.arcgis.com/4.10/"></script>
   <script type="text/javascript" src="static/js/house.js"></script>
- 
 </body>
 </html>

@@ -469,7 +469,6 @@ require([
           pointLabelClass.labelPlacement = "center-center";
           layerPoints.labelingInfo = [ pointLabelClass ];
           map.add(layerPoints);
-          
           results.features.forEach(myFunction);  
 
       }
@@ -487,6 +486,10 @@ require([
         document.getElementById("plist").appendChild(node);        
       }
       
+
+      $("#g1").on('change', 'input:radio[id^="v"]', function (event) {
+        alert("click fired");
+      });
       
       /*
       window.onload = function() {

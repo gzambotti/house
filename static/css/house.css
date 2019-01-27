@@ -7,13 +7,6 @@ html,body {
 	font-family: "Gotham", Sans-serif;
 }
 
-.esri-view-height-xsmall .esri-ui-corner .esri-legend {
-    max-height: 640px;
-}
-
-#collapsePoints{
-    height: 640px;
-}
 
 #alert_placeholder{
   display: hide;  
