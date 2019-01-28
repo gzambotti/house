@@ -93,6 +93,14 @@ require([
         lon:""
       }};
 
+      const np = {"attributes":{
+        sessionID:"",
+        siteID:"",
+        supportScale:"",
+        proposalVote:"",
+        money:""
+      }};
+
       Date.prototype.IsoNum = function (n) {
           var tzoffset = this.getTimezoneOffset() * 60000; //offset in milliseconds
           var localISOTime = (new Date(this - tzoffset)).toISOString().slice(0,-1);
@@ -379,6 +387,7 @@ require([
           // try doing console.log(e.target.nodeName), it will result LI
           if(e.target && e.target.nodeName == "LI") {              
               console.log(e.target.id.toString() + " was clicked");
+              console.log($('input[name=framework]:checked').val())
               query.where = 'OBJECTID = ' + e.target.id;              
               bostonPointLayer.queryFeatures(query).then(function(result) {
                 var point = {
@@ -397,6 +406,12 @@ require([
                 v.style.backgroundColor = "yellow";
                 
               });
+
+              np.attributes.sessionID = ;
+              np.attributes.siteID = ;
+              np.attributes.supportScale = ;
+              np.attributes.proposalVote = ;                     
+        
             }
         });
       });
@@ -487,9 +502,7 @@ require([
       }
       
 
-      $("#g1").on('change', 'input:radio[id^="v"]', function (event) {
-        alert("click fired");
-      });
+      
       
       /*
       window.onload = function() {
