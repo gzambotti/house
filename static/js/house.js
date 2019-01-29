@@ -82,6 +82,8 @@ require([
         yMin = 5216121.17579509;
       };
 
+      const nparr = [];
+
       const neighbor = {"attributes":{
         sessionID:"",
         n0:"",
@@ -93,13 +95,7 @@ require([
         lon:""
       }};
 
-      const np = {"attributes":{
-        sessionID:"",
-        siteID:"",
-        supportScale:"",
-        proposalVote:"",
-        money:""
-      }};
+      
 
       Date.prototype.IsoNum = function (n) {
           var tzoffset = this.getTimezoneOffset() * 60000; //offset in milliseconds
@@ -259,7 +255,6 @@ require([
           
           //console.log(event.mapPoint);
           //console.log(document.getElementById("housecounter").innerHTML.split(": "))
-        
           document.getElementById("housecounter").innerHTML = "Neighborhood Counter: " + x.toString();
 
           //view.whenLayerView(bostonBoundaryLayer).then(function(layerView){
@@ -386,6 +381,13 @@ require([
           // e.target is our targetted element.
           // try doing console.log(e.target.nodeName), it will result LI
           if(e.target && e.target.nodeName == "LI") {              
+              const np = {"attributes":{
+                sessionID:"",
+                siteID:"",
+                supportScale:"",
+                proposalVote:"",
+                money:""
+              }};
               console.log(e.target.id.toString() + " was clicked");
               console.log($('input[name=framework]:checked').val())
               query.where = 'OBJECTID = ' + e.target.id;              
@@ -401,18 +403,18 @@ require([
                   symbol: markerSymbol
                 });
                 view.graphics.add(pointGraphic);
-
                 var v = document.getElementById(e.target.id)
                 v.style.backgroundColor = "yellow";
-                
               });
 
-              np.attributes.sessionID = ;
-              np.attributes.siteID = ;
-              np.attributes.supportScale = ;
-              np.attributes.proposalVote = ;                     
-        
+              np.attributes.sessionID = userhash;
+              np.attributes.siteID = e.target.id;
+              np.attributes.supportScale = $('input[name=framework]:checked').val();
+              np.attributes.proposalVote = 1;
+              nparr.push(np)                    
+              console.log(nparr)
             }
+            
         });
       });
        
