@@ -78,6 +78,18 @@ def portal(house_json):
     add_result = snr5_fset.edit_features(adds = [d])
     add_result
     #print (snr5_fset.sdf.head())
+
+def portal2(house_json):
+    snr5_features = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
+    snr5_fset = snr5_features.tables[0]
+    house_json = [{"attributes": {"sessionid":"eeeee","n1":"d1","n2":"d1","n3":"d1","n4":"d1","zipcode":"02139","lat":5,"lon":6}}, {"attributes": {"sessionid": "pppppp","n1": "d2","n2": "d2","n3": "d2", "n4":"d2", "zipcode":"02139", "lat":54, "lon":64}}]
+    for b in house_json:
+        print(b)
+        d = json.dumps(b)
+        dd = json.loads(d)
+        add_result = snr5_fset.edit_features(adds = [dd])
+        add_result
+
 if __name__ == '__main__':
 	# run!
 	app.run()

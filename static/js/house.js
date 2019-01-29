@@ -386,7 +386,7 @@ require([
                 siteID:"",
                 supportScale:"",
                 proposalVote:"",
-                money:""
+                pyesno:""                
               }};
               console.log(e.target.id.toString() + " was clicked");
               console.log($('input[name=framework]:checked').val())
@@ -411,7 +411,13 @@ require([
               np.attributes.siteID = e.target.id;
               np.attributes.supportScale = $('input[name=framework]:checked').val();
               np.attributes.proposalVote = 1;
-              nparr.push(np)                    
+              np.attributes.pyesno = $('input[name=framework1]:checked').val();;
+              nparr.push(np)
+              console.log(np)
+              //var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+              //xmlhttp.open("POST", "/receiver");
+              //xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+              //xmlhttp.send(JSON.stringify(neighbor));                    
               console.log(nparr)
             }
             
@@ -502,9 +508,6 @@ require([
         node.appendChild(textnode);        
         document.getElementById("plist").appendChild(node);        
       }
-      
-
-      
       
       /*
       window.onload = function() {
