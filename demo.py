@@ -47,14 +47,14 @@ def add():
         portal('{"attributes": {"id": ' + a + ',"name": "z888","zipcode": "' + b + '","date": "20181203"}}')
         return jsonify(result=a + b)
 
-@app.route('/receiver', methods = ['POST'])
+@app.route('/receiver/portal1', methods = ['POST'])
 def worker():        
 	# read json + reply
 	data = request.get_json(force=True)
 	
 	d = json.dumps(data)
 	print (d)
-	portal(d)
+	portal1(d)
 	result = 'test'
 	#for item in data:
                 # loop over every row
@@ -62,9 +62,24 @@ def worker():
     #            result = 'test'
 	return result
 
+@app.route('/receiver/portal2', methods = ['POST'])
+def worker():        
+    # read json + reply
+    data = request.get_json(force=True)
+    
+    d = json.dumps(data)
+    print (d)
+    portal2(d)
+    result = 'test'
+    #for item in data:
+                # loop over every row
+        #result = str(item['id']) + "-" + str(item["name"]) + "-" + str(item['zipcode']) + "-" + str(item['date'])                
+    #            result = 'test'
+    return result
+
 gis = GIS("https://www.arcgis.com", os.getenv("user_house"), os.getenv("passwd_house"), verify_cert=False)
 # update wifi dataset (snr5, snr2.4, and nextgen)
-def portal(house_json):    
+def portal1(house_json):    
     # get the snr feature service from portal
     snr5_features = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
     snr5_fset = snr5_features.tables[0] #querying without any conditions returns all the features
@@ -79,13 +94,14 @@ def portal(house_json):
     add_result
     #print (snr5_fset.sdf.head())
 
-def portal2(house_json):
-    snr5_features = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
+def portal2(house_json):    
+    snr5_features = gis.content.get('382d49165290429f94ba511eddad6938')
     snr5_fset = snr5_features.tables[0]
-    house_json = [{"attributes": {"sessionid":"eeeee","n1":"d1","n2":"d1","n3":"d1","n4":"d1","zipcode":"02139","lat":5,"lon":6}}, {"attributes": {"sessionid": "pppppp","n1": "d2","n2": "d2","n3": "d2", "n4":"d2", "zipcode":"02139", "lat":54, "lon":64}}]
+    #house_json = [{"attributes": {"sessionID":"eeeee","siteID":"d1","supportScale":"d1","proposalVote":"d1","pyesno":"yes"}}, {"attributes": {"sessionID":"zzzzz","siteID":"d2","supportScale":"d2","proposalVote":"d2","pyesno":"no"}}]
+    c = house_json
     for b in house_json:
         print(b)
-        d = json.dumps(b)
+        d = json.dumps(c)
         dd = json.loads(d)
         add_result = snr5_fset.edit_features(adds = [dd])
         add_result
@@ -93,5 +109,5 @@ def portal2(house_json):
 if __name__ == '__main__':
 	# run!
 	app.run()
-
+    
 

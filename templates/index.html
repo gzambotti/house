@@ -6,25 +6,28 @@
   <meta name="description" content="Building Boston">
   <meta name="keywords" content="HTML, CSS, JavaScript">
   <meta name="author" content="Giovanni Zambotti">
-  <meta name="date" content="2018-12-14" scheme="YYYY-MM-DD">
+  <meta name="date" content="2019-01-26" scheme="YYYY-MM-DD">
   <meta http-equiv="Content-Security-Policy" content="object-src 'self'">
 
-  <title>Building Boston Flask</title>
-
+  <title>Building Boston</title>
+  <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.2/css/calcite-web.min.css">
   <!-- Calcite Bootstrap -->
   <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-bootstrap.min-v0.2.css">
   <!-- Calcite Maps -->
   <link rel="stylesheet" href="https://esri.github.io/calcite-maps/dist/css/calcite-maps-arcgis-4.x.min-v0.2.css">
   <!-- ArcGIS JS 4 -->
-  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">  
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css"> 
+  <!-- Calcite JS -->
+  <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.3/css/calcite-web.min.css">
+     
   <!-- Custome JS 4 -->
-  <link rel="stylesheet" src="{{ url_for('static', filename='css/fdo.css') }}"></script>    
+  
+  <link rel="stylesheet" src="{{ url_for('static', filename='static/css/house.css') }}"></script>  
 </head>
 
 <body class="calcite-maps calcite-nav-top">
 
   <!-- Navbar -->
-
   <nav class="navbar calcite-navbar navbar-fixed-top calcite-text-dark calcite-bg-dark" style="background-color: rgb(196, 221, 250);">
     <!-- Menu -->
     <div class="dropdown calcite-dropdown calcite-text-dark calcite-bg-light" role="presentation">
@@ -38,7 +41,9 @@
         </div>
       </a>
       <ul class="dropdown-menu">
+        <!--
         <li><a role="button" data-target="#panelInfo" aria-haspopup="false"><span class="glyphicon glyphicon-info-sign"></span> Info</a></li>
+        -->
         <li><a role="button" data-target="#panelNeighborhood" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Neighborhood Info</a></li> 
         <li><a role="button" data-target="#panelZipcode" aria-haspopup="true"><span class="glyphicon glyphicon-th-large"></span> Zipcode Info</a></li>          
         <li><a role="button" id="calciteToggleNavbar" aria-haspopup="true"><span class="glyphicon glyphicon-fullscreen"></span> Full Map</a></li>
@@ -46,7 +51,7 @@
     </div>
     <!-- Title -->
     <div class="calcite-title calcite-overflow-hidden">
-      <span class="calcite-title-main">Building Boston Flask</span>
+      <span class="calcite-title-main">Boston Housing</span>
       <span class="calcite-title-divider hidden-xs"></span>
       <span class="calcite-title-sub hidden-xs">TBD....</span>
     </div>
@@ -60,46 +65,64 @@
     </ul>
   </nav>
   <!--/.calcite-navbar -->
-
   <!-- Map  -->
-
   <div class="calcite-map calcite-map-absolute">
     <div id="mapViewDiv">
-      <div id="alert_placeholder">        
-      </div>
+      <div id="alert_placeholder"></div>
     </div>
   </div>
   <!-- /.calcite-map -->
+
+  <!-- Modal -->
+  <div class="js-modal modal-overlay modifier-class is-active" data-modal="foo">
+  <div class="modal-content column-12" role="dialog" aria-labelledby="modal" role="dialog">
+
+    <a class="js-modal-toggle right" href="#" aria-label="close-modal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 32 32" class="svg-icon"><path d="M18.404 16l9.9 9.9-2.404 2.404-9.9-9.9-9.9 9.9L3.696 25.9l9.9-9.9-9.9-9.898L6.1 3.698l9.9 9.899 9.9-9.9 2.404 2.406-9.9 9.898z"/></svg>
+    </a>
+    <p>
+      INTRO About the Project TO DO!!!
+      Click Start to begin.
+    </p>
+    <div class="text-right">
+        <button id="start" class="btn js-modal-toggle">Start</button>
+    </div>
+  </div>
+  </div>
 
   <!-- Panels -->
 
   <div class="calcite-panels calcite-panels-right calcite-text-dark calcite-bg-dark panel-group" style="background-color: rgb(196, 221, 250);">
 
-    <!-- Info Panel -->
-    <div id="panelInfo" class="panel collapse in">
-      <div id="headingInfo" class="panel-heading" role="tab">
-        <div class="panel-title" style="background-color: rgb(196, 221, 250);">
-          <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseInfo"
-            aria-expanded="false" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign
-" aria-hidden="true"></span><span class="panel-label">Info</span></a>
-          <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
+      <!-- Info Panel -->
+      <!--
+      <div id="panelInfo" class="panel collapse in">
+        <div id="headingInfo" class="panel-heading" role="tab">
+          <div class="panel-title" style="background-color: rgb(196, 221, 250);">
+            <a class="panel-toggle collapsed" role="button" data-toggle="collapse" href="#collapseInfo"
+              aria-expanded="false" aria-controls="collapseInfo"><span class="glyphicon glyphicon-info-sign
+  " aria-hidden="true"></span><span class="panel-label">Info</span></a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelInfo"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>
 
+          </div>
+        </div>
+        <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
+          <div class="panel-body">
+            
+            As more people move to Boston, the City needs to decide where new homes and apartments
+            should be built. In this activity, you will decide where 600 units of market rate housing should be built in Boston.
+            You will be given 5 buildings, each containing 120 units of housing, to place within Boston. To
+            place a building, click on the building’s button, then clicking on the location where you would like  
+            that building to go. To start click the "x" button on the top right.
+            <img src="css/images/house.gif" alt="house" height="200" width="300">        
+            <video width="300" height="200" autoplay controls><source src="http://maps.cga.harvard.edu/housing/css/images/movie.m4v" type="video/mp4"></video>
+            
+            
+          </div>
         </div>
       </div>
-      <div id="collapseInfo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingInfo">
-        <div class="panel-body">
-          As more people move to Boston, the City needs to decide where new homes and apartments
-          should be built. In this activity, you will decide where 600 units of market rate housing should be built in Boston.
-          You will be given 5 buildings, each containing 120 units of housing, to place within Boston. To
-          place a building, click on the building’s button, then clicking on the location where you would like  
-          that building to go. To start click the "x" button on the top right.
-          <!--<img src="css/images/house.gif" alt="house" height="200" width="300">        -->
-          <video width="300" height="200" autoplay controls><source src="http://maps.cga.harvard.edu/housing/css/images/movie.m4v" type="video/mp4"></video>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Neighborhood Panel -->          
+      -->
+      <!-- Neighborhood Panel -->          
       <div id="panelNeighborhood" class="panel collapse">
         <div id="headingNeighborhood" class="panel-heading" role="tab">
           <div class="panel-title" style="background-color: rgb(196, 221, 250);">
@@ -109,15 +132,15 @@
         </div>
         <div id="collapseNeighborhood" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingNeighborhood">
           <div class="panel-body">
-            <p>Step 1: Clicks on which neighborhood(s) you would like new housing to be built.</p>
-            <p id="housecounter">House Counter: 4</p>
+            <p>Click on the map neighborhood(s) where you would like new housing to be built. Click "Remove Selected" to remove all your selection. Click "Submit" to submit all your selection.</p>
+            <p id="housecounter">Neighborhood Counter: 4</p>
             <button id="removepoly" type="button" class="btn btn-default">Remove Selected neighborhood(s)</button>
-            <button id="submitpoly" type="button" class="btn btn-default">Submit neighborhood(s)</button>
+            <button id="submitpoly" type="button" class="btn btn-default" disabled="disabled">Submit neighborhood(s)</button>
           </div>
         </div>
       </div>
 
-    <!-- Zipcode Panel -->          
+      <!-- Zipcode Panel -->          
       <div id="panelZipcode" class="panel collapse">
         <div id="headingZipcode" class="panel-heading" role="tab">
           <div class="panel-title" style="background-color: rgb(196, 221, 250);">
@@ -166,8 +189,41 @@
         </div>
       </div>
 
-
+      <!-- Points Panel -->          
+      <div id="panelPoints" class="panel collapse">
+        <div id="headingPoints" class="panel-heading" role="tab">
+          <div class="panel-title" style="background-color: rgb(196, 221, 250);">
+            <a class="panel-toggle" role="button" data-toggle="collapse" href="#collapseZipcode" data-parent="#panelAccordion" aria-expanded="true" aria-controls="collapseZipcode"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Points Info</a>
+            <a class="panel-close" role="button" data-toggle="collapse" data-target="#panelZipcode"><span class="esri-icon esri-icon-close" aria-hidden="true"></span></a>  
+          </div>
+        </div>
+        <div id="collapsePoints" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPoints">
+          <div>
+            <img src="static/css/house.png" alt="house" width="400">            
+            <fieldset id="np" class="radio-group font-size--3">
+                <legend class="radio-group-title font-size--3">Do you support replacing the current building with the proposed building?</legend>
+                <input class="radio-group-input" type="radio" id="v1" value="Oppose" name="framework"/>
+                <label class="radio-group-label" for="v1">Oppose</label>
+                <input class="radio-group-input" type="radio" id="v2" value="Neutral" name="framework"/>
+                <label class="radio-group-label" for="v2">Neutral</label>
+                <input class="radio-group-input" type="radio" id="v3" value="Support" name="framework"/>
+                <label class="radio-group-label" for="v3">Support</label>
+            </fieldset>
+             <fieldset id="zp" class="radio-group font-size--3">
+                <legend class="radio-group-title font-size--3">“Suppose you could vote on whether this proposal should be built in the next election. If the proposal passes, your household would receive $X. How would you vote on this proposal?”</legend>
+                <input class="radio-group-input" type="radio" id="v4" value="Yes" name="framework1"/>
+                <label class="radio-group-label" for="v4">Yes</label>
+                <input class="radio-group-input" type="radio" id="v5" value="No" name="framework1"/>
+                <label class="radio-group-label" for="v5">No</label>                
+            </fieldset>
+            <ul id="plist" class="ulplist"></ul>
+          </div>
+        </div>
+      </div>
   </div>
+  
+  <script type="text/javascript" src="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.2/js/calcite-web.min.js"></script>
+
   <!-- /.calcite-panels -->
   <script type="text/javascript">
     var dojoConfig = {
@@ -181,14 +237,12 @@
       }]
     };
   </script>
-
-  <!-- ArcGIS JS 4 -->  
-  <script src="https://js.arcgis.com/4.10/"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+  
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
-  
-  <script type="text/javascript" src="{{ url_for('static', filename='js/house.js') }}"></script>
- 
+  <!-- ArcGIS JS 4 -->
+  <script src="https://js.arcgis.com/4.10/"></script>  
+  <script type="text/javascript" src="{{ url_for('static', filename='static/js/house.js') }}"></script>
 </body>
 </html>

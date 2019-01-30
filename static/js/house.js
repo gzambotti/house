@@ -366,7 +366,7 @@ require([
         console.log(JSON.stringify(neighbor));
         /*$.post("receiver", JSON.stringify(neighbor), function(){});*/
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-        xmlhttp.open("POST", "/receiver");
+        xmlhttp.open("POST", "/receiver/portal1");
         xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xmlhttp.send(JSON.stringify(neighbor));
         
@@ -414,10 +414,10 @@ require([
               np.attributes.pyesno = $('input[name=framework1]:checked').val();;
               nparr.push(np)
               console.log(np)
-              //var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
-              //xmlhttp.open("POST", "/receiver");
-              //xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-              //xmlhttp.send(JSON.stringify(neighbor));                    
+              var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+              xmlhttp.open("POST", "/receiver/portal2");
+              xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+              xmlhttp.send(JSON.stringify(np));                    
               console.log(nparr)
             }
             
