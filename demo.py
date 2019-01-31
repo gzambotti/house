@@ -48,7 +48,7 @@ def add():
         return jsonify(result=a + b)
 
 @app.route('/receiver/portal1', methods = ['POST'])
-def worker():        
+def worker1():        
 	# read json + reply
 	data = request.get_json(force=True)
 	
@@ -63,7 +63,7 @@ def worker():
 	return result
 
 @app.route('/receiver/portal2', methods = ['POST'])
-def worker():        
+def worker2():        
     # read json + reply
     data = request.get_json(force=True)
     
@@ -97,7 +97,13 @@ def portal1(house_json):
 def portal2(house_json):    
     snr5_features = gis.content.get('382d49165290429f94ba511eddad6938')
     snr5_fset = snr5_features.tables[0]
+    print (house_json)
+    d = json.loads(house_json)
+    #add_result = snr5_fset.edit_features(adds = [house_dict])
+    add_result = snr5_fset.edit_features(adds = [d])
+    add_result
     #house_json = [{"attributes": {"sessionID":"eeeee","siteID":"d1","supportScale":"d1","proposalVote":"d1","pyesno":"yes"}}, {"attributes": {"sessionID":"zzzzz","siteID":"d2","supportScale":"d2","proposalVote":"d2","pyesno":"no"}}]
+    """
     c = house_json
     for b in house_json:
         print(b)
@@ -105,7 +111,7 @@ def portal2(house_json):
         dd = json.loads(d)
         add_result = snr5_fset.edit_features(adds = [dd])
         add_result
-
+    """
 if __name__ == '__main__':
 	# run!
 	app.run()
