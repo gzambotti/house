@@ -112,6 +112,26 @@ def portal2(house_json):
         add_result = snr5_fset.edit_features(adds = [dd])
         add_result
     """
+def exportCSV():
+    print ("start")
+    # tables
+    table1 = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
+    t1 = table1.tables[0].query()
+    df1 = t1.sdf
+
+    table2 = gis.content.get('382d49165290429f94ba511eddad6938')
+    t2 = table2.tables[0].query()
+    df2 = t2.sdf
+    # tables join 
+    df = pd.merge(df1, df2, on='sessionID', how='left')
+    #print (df)
+    display(df)
+    #export_csv = df.to_csv (r'/Users/cecilia/Desktop/export_dataframe.csv', index = None, header=True) 
+    #Don't forget to add '.csv' at the end of the path
+
+    #print (df)
+
+
 if __name__ == '__main__':
 	# run!
 	app.run()
