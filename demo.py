@@ -19,7 +19,7 @@ from copy import deepcopy
 
 import sys
 #!flask/bin/python
-from flask import Flask, render_template, request, redirect, Response, jsonify
+from flask import Flask, render_template, request, redirect, Response, jsonify, send_file
 import random, json
 
 app = Flask(__name__)
@@ -30,15 +30,6 @@ def output():
 	return render_template('index.html', name='Joe')
 
 
-@app.route('/test', methods = ['get'])
-def test():
-    print ("Hello")
-    #a = request.args.get('a', 0, type=int)
-    #b = request.args.get('b', 0, type=str)
-    #print( jsonify(result=a + b))
-    #portal('{"attributes": {"id": 8118,"name": "z888","zipcode": "88555","date": "20181203"}}')
-    return "nothing"
-
 @app.route('/add', methods=['POST'])
 def add():
         print ("Hello")
@@ -47,7 +38,7 @@ def add():
         portal('{"attributes": {"id": ' + a + ',"name": "z888","zipcode": "' + b + '","date": "20181203"}}')
         return jsonify(result=a + b)
 
-@app.route('/receiver/portal1', methods = ['POST'])
+@app.route('/receiver', methods = ['POST'])
 def worker1():        
 	# read json + reply
 	data = request.get_json(force=True)
@@ -62,7 +53,7 @@ def worker1():
     #            result = 'test'
 	return result
 
-@app.route('/receiver/portal2', methods = ['POST'])
+@app.route('/receiver', methods = ['POST'])
 def worker2():        
     # read json + reply
     data = request.get_json(force=True)
@@ -113,6 +104,7 @@ def portal2(house_json):
         add_result
     """
 def exportCSV():
+    gis = GIS("https://www.arcgis.com", os.getenv("user_house"), os.getenv("passwd_house"), verify_cert=False)
     print ("start")
     # tables
     table1 = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
@@ -125,15 +117,72 @@ def exportCSV():
     # tables join 
     df = pd.merge(df1, df2, on='sessionID', how='left')
     #print (df)
-    display(df)
-    #export_csv = df.to_csv (r'/Users/cecilia/Desktop/export_dataframe.csv', index = None, header=True) 
+    #display(df)
+    export_csv = df.to_csv (r'data/export.csv', index = None, header=True) 
     #Don't forget to add '.csv' at the end of the path
+    return Response(
+        export_csv,
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=export.csv"})
 
     #print (df)
 
+@app.route('/test', methods = ['get'])
+def test():
+    print ("Hello")
+    table1 = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
+    t1 = table1.tables[0].query()
+    df1 = t1.sdf
+
+    table2 = gis.content.get('382d49165290429f94ba511eddad6938')
+    t2 = table2.tables[0].query()
+    df2 = t2.sdf
+    # tables join 
+    df = pd.merge(df1, df2, on='sessionID', how='left')
+    print (df)
+    #display(df)
+    export_csv = df.to_csv (r'data/export.csv', index = None, header=True) 
+    #return send_from_directory(directory='data', filename='export.csv')
+    
+    return '''
+        <html><body>
+        Hello. <a href="data/export.csv">Click me.</a>
+        </body></html>
+        '''
+    
+
+@app.route("/")
+def hello():
+    return '''
+        <html><body>
+        Hello. <a href="/getPlotCSV">Click me.</a>
+        </body></html>
+        '''
+
+def getPlotCSV():
+    # with open("outputs/Adjacency.csv") as fp:
+    #     csv = fp.read()
+    table1 = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
+    t1 = table1.tables[0].query()
+    df1 = t1.sdf
+
+    table2 = gis.content.get('382d49165290429f94ba511eddad6938')
+    t2 = table2.tables[0].query()
+    df2 = t2.sdf
+    # tables join 
+    df = pd.merge(df1, df2, on='sessionID', how='left')
+    print (df)
+    #display(df)
+    export_csv = df.to_csv (r'export.csv', index = None, header=True) 
+    #Don't forget to add '.csv' at the end of the path
+    return Response(
+        export_csv,
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=export.csv"})
 
 if __name__ == '__main__':
 	# run!
 	app.run()
+    #exportCSV()
     
 
