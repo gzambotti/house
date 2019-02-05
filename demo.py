@@ -101,7 +101,7 @@ def portal2(house_json):
         add_result
     """
 
-@app.route('/result.csv')
+@app.route('/table'+ time.strftime("%Y%m%d") +'.csv')
 def output_dataframe_csv():
     
     output = StringIO()
@@ -122,6 +122,5 @@ def output_dataframe_csv():
 if __name__ == '__main__':
 	# run!
 	app.run()
-    #exportCSV()
     
 
