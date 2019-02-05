@@ -16,6 +16,7 @@ from arcgis.gis import GIS
 import pandas as pd
 import numpy as np
 from copy import deepcopy
+from io import StringIO
 
 import sys
 #!flask/bin/python
@@ -74,10 +75,6 @@ def portal1(house_json):
     # get the snr feature service from portal
     snr5_features = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
     snr5_fset = snr5_features.tables[0] #querying without any conditions returns all the features
-    #snr5_fset.sdf.head()
-    #all_features = snr5_fset.features
-    #print (all_features[0])
-    #house_dict = {"attributes": {"id": 222,"name": "z222","zipcode": "22222","date": time.strftime("%Y%m%d")}}
     print (house_json)
     d = json.loads(house_json)
     #add_result = snr5_fset.edit_features(adds = [house_dict])
@@ -103,65 +100,11 @@ def portal2(house_json):
         add_result = snr5_fset.edit_features(adds = [dd])
         add_result
     """
-def exportCSV():
-    gis = GIS("https://www.arcgis.com", os.getenv("user_house"), os.getenv("passwd_house"), verify_cert=False)
-    print ("start")
-    # tables
-    table1 = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
-    t1 = table1.tables[0].query()
-    df1 = t1.sdf
 
-    table2 = gis.content.get('382d49165290429f94ba511eddad6938')
-    t2 = table2.tables[0].query()
-    df2 = t2.sdf
-    # tables join 
-    df = pd.merge(df1, df2, on='sessionID', how='left')
-    #print (df)
-    #display(df)
-    export_csv = df.to_csv (r'data/export.csv', index = None, header=True) 
-    #Don't forget to add '.csv' at the end of the path
-    return Response(
-        export_csv,
-        mimetype="text/csv",
-        headers={"Content-disposition": "attachment; filename=export.csv"})
-
-    #print (df)
-
-@app.route('/test', methods = ['get'])
-def test():
-    print ("Hello")
-    table1 = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
-    t1 = table1.tables[0].query()
-    df1 = t1.sdf
-
-    table2 = gis.content.get('382d49165290429f94ba511eddad6938')
-    t2 = table2.tables[0].query()
-    df2 = t2.sdf
-    # tables join 
-    df = pd.merge(df1, df2, on='sessionID', how='left')
-    print (df)
-    #display(df)
-    export_csv = df.to_csv (r'data/export.csv', index = None, header=True) 
-    #return send_from_directory(directory='data', filename='export.csv')
+@app.route('/result.csv')
+def output_dataframe_csv():
     
-    return '''
-        <html><body>
-        Hello. <a href="data/export.csv">Click me.</a>
-        </body></html>
-        '''
-    
-
-@app.route("/")
-def hello():
-    return '''
-        <html><body>
-        Hello. <a href="/getPlotCSV">Click me.</a>
-        </body></html>
-        '''
-
-def getPlotCSV():
-    # with open("outputs/Adjacency.csv") as fp:
-    #     csv = fp.read()
+    output = StringIO()
     table1 = gis.content.get('b93189cdca254eb3ab310baa87ce4053')
     t1 = table1.tables[0].query()
     df1 = t1.sdf
@@ -171,14 +114,10 @@ def getPlotCSV():
     df2 = t2.sdf
     # tables join 
     df = pd.merge(df1, df2, on='sessionID', how='left')
-    print (df)
-    #display(df)
-    export_csv = df.to_csv (r'export.csv', index = None, header=True) 
-    #Don't forget to add '.csv' at the end of the path
-    return Response(
-        export_csv,
-        mimetype="text/csv",
-        headers={"Content-disposition": "attachment; filename=export.csv"})
+    #export_csv = df.to_csv (r'export.csv', index = None, header=True) 
+    df.to_csv(output)
+
+    return Response(output.getvalue(), mimetype="text/csv")
 
 if __name__ == '__main__':
 	# run!
