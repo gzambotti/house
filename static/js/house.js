@@ -405,7 +405,7 @@ require([
                 view.graphics.add(pointGraphic);
                 var v = document.getElementById(e.target.id)
                 v.style.backgroundColor = "blue";
-                v.style.borderColor: "yellow";
+                v.style.borderColor = "yellow";
               });
 
               np.attributes.sessionID = userhash;
